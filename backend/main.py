@@ -29,7 +29,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="ATLAS — Adaptive Trust Management API",
+    title="ATLAS: Adaptive Trust Management API",
     description="Backend API for Defending Persistent LLM Agents Against Conversational Memory Poisoning",
     version="1.0.0",
     lifespan=lifespan
@@ -68,7 +68,7 @@ async def health_check():
     """
     return {
         "status": "healthy",
-        "system": "ATLAS — Adaptive Trust Management for Long-term Agent Storage",
+        "system": "ATLAS: Adaptive Trust Management for Long-term Agent Storage",
         "version": "1.0.0",
         "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
         "gemini_api_configured": bool(settings.GEMINI_API_KEY),

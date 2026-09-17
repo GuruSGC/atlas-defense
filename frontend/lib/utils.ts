@@ -38,8 +38,8 @@ export function getScoreBgColor(score: number): string {
 export function formatDate(isoString: string): string {
   try {
     const d = new Date(isoString);
-    return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" }) +
-      " (" + d.toLocaleDateString([], { month: "short", day: "numeric" }) + ")";
+    return d.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) +
+      " (" + d.toLocaleDateString("en-US", { month: "short", day: "numeric" }) + ")";
   } catch {
     return isoString;
   }

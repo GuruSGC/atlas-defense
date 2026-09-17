@@ -12,7 +12,8 @@ import {
   Table,
   CheckCircle2,
   XCircle,
-  HelpCircle
+  HelpCircle,
+  BookOpen
 } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -88,6 +89,32 @@ export default function EvaluationPage() {
           </Button>
         </div>
       </div>
+
+      {/* Dataset Provenance */}
+      {evaluation && (
+        <Card className="border-indigo-900/50 bg-indigo-950/10">
+          <CardContent className="py-3.5">
+            <div className="flex items-start gap-3">
+              <BookOpen className="w-4 h-4 text-indigo-400 mt-0.5 shrink-0" />
+              <div className="space-y-1 text-xs">
+                <div className="font-semibold text-slate-200">
+                  {evaluation.dataset_info.name}{" "}
+                  <span className="text-slate-500 font-mono text-[10px]">v{evaluation.dataset_info.version}</span>
+                </div>
+                <div className="text-slate-400">
+                  <span className="text-slate-500">Benign class:</span> {evaluation.dataset_info.benign_source}
+                </div>
+                <div className="text-slate-400">
+                  <span className="text-slate-500">Adversarial class:</span> {evaluation.dataset_info.adversarial_source}
+                </div>
+                <div className="text-[10px] text-slate-500">
+                  Deterministic seed: <span className="font-mono">{evaluation.dataset_info.seed}</span> (full provenance in evaluation/data/README.md)
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Main Metric Cards Grid */}
       {evaluation && (

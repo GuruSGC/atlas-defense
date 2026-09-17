@@ -15,7 +15,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 class Settings(BaseSettings):
     # API & Environment
-    PROJECT_NAME: str = "ATLAS — Adaptive Trust Management for Long-term Agent Storage"
+    PROJECT_NAME: str = "ATLAS: Adaptive Trust Management for Long-term Agent Storage"
     API_PREFIX: str = "/api"
     DEBUG: bool = True
     

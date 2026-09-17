@@ -36,7 +36,7 @@ export const Header: React.FC = () => {
           <ShieldCheck className="w-4 h-4 text-blue-400" />
           ATLAS
           <span className="text-slate-500 font-normal hidden sm:inline text-xs">
-            — Adaptive Trust Management for Long-term Agent Storage
+            : Adaptive Trust Management for Long-term Agent Storage
           </span>
         </h1>
       </div>

@@ -249,7 +249,7 @@ export default function AttackLabPage() {
                         <div className="text-sm font-bold">
                           {simulationResult.defense_successful
                             ? "ATTACK BLOCKED & MEMORY QUARANTINED"
-                            : "ATTACK SUCCEEDED — AGENT MEMORY POISONED"}
+                            : "ATTACK SUCCEEDED & AGENT MEMORY POISONED"}
                         </div>
                         <div className="text-xs opacity-80 mt-0.5">
                           {simulationResult.defense_successful

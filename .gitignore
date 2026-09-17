@@ -35,3 +35,13 @@ yarn-error.log*
 frontend/.env.local
 !frontend/.env.local.example
 !backend/.env.example
+
+# Editor directories
+.vscode/
+.idea/
+
+# Academic deliverables (not source code; kept locally, not in the repo)
+*.docx
+*.pptx
+*.pdf
+

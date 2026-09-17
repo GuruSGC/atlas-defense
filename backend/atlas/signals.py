@@ -13,13 +13,46 @@ The six signals are:
 """
 
 import re
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Tuple
 import numpy as np
 from core.settings import settings
 from core.embeddings import embedding_service
 from atlas.anomaly_detector import anomaly_detector
 from memory.vector_store import global_vector_store
 from memory.memory_models import MemoryStatus, MemorySource
+
+
+
+# Topic-agnostic revision/overwrite language: phrases that indicate an existing fact is
+# being changed, reversed, or superseded, independent of *what* the fact is about. This
+# complements the hardcoded domain_clusters in evaluate_historical_consistency (which only
+# recognize a handful of software-specific topics) with a general linguistic signal that
+# generalizes to arbitrary domains (medical, financial, organizational, etc.).
+REVISION_MARKER_PATTERNS = [
+    r"\bno longer\b", r"\bnot\b.{0,20}\banymore\b", r"\bwas changed to\b", r"\bchanged from\b",
+    r"\bwas updated to\b", r"\breversed\b", r"\bmisdiagnos", r"\bquietly\b", r"\bwas moved\b",
+    r"\bmoved up\b", r"\bwas switched\b", r"\bdisabled entirely\b", r"\bremoved from\b",
+    r"\bincreased from\b", r"\bdecreased from\b", r"\brevised (upward|downward)\b",
+    r"\bdiscontinu", r"\bstop taking\b", r"\bskip(ping|ped)?\b", r"\bwas reset to\b",
+    r"\bcorrection\b", r"\bupdate:\s", r"\bswitch(ed)? to\b", r"\bwas raised to\b",
+    r"\bwas increased\b", r"\bpermanently changed\b", r"\bpermanently disabled\b",
+    r"\bwas approved\b", r"\brecommended (discontinuing|moving|switching|skipping)\b",
+]
+
+# Topic-agnostic authority/identity-claim pattern: an unverified conversational message
+# claiming to *be*, or speak *for*, a privileged role. Broader than the narrow
+# destructive_markers list in evaluate_source_reliability, which only matched a handful of
+# exact phrases (e.g. "i am the lead system administrator") and missed equivalent claims
+# like "this is the CEO" or "Dr. Chen has approved...".
+AUTHORITY_CLAIM_PATTERN = re.compile(
+    r"\b(?:this is|i am|i'm|as)\s+(?:the|your)\s+"
+    r"(?:[a-z-]+(?:'s)?\s+){0,3}"
+    r"(ceo|cfo|cto|coo|admin(?:istrator)?|sysadmin|system administrator|security officer|"
+    r"incident commander|platform owner|manager|director|physician|doctor|dr\.|nurse|"
+    r"accountant|fraud department|it department|hr department|"
+    r"support team|customer support|lead|owner)\b",
+    re.IGNORECASE,
+)
 
 
 class TrustSignals:
@@ -46,15 +79,18 @@ class TrustSignals:
         return float(np.clip(score, 0.05, 1.0))
 
     @staticmethod
-    def evaluate_embedding_anomaly(candidate_embedding: List[float]) -> float:
+    def evaluate_embedding_anomaly(candidate_embedding: List[float]) -> Tuple[float, float]:
         """
         Signal 2: Embedding Anomaly (0.0 to 1.0)
-        Uses Isolation Forest in latent embedding space.
+        Uses Isolation Forest in latent embedding space, hardened via randomized-smoothing
+        certification (see atlas/anomaly_detector.py module docstring for exact scope).
         Higher score = normal/in-distribution (safe), Lower score = statistical outlier/anomaly.
+
+        Returns (score, certified_radius).
         """
         if not candidate_embedding:
-            return 0.5
-        return anomaly_detector.compute_anomaly_score(candidate_embedding)
+            return 0.5, 0.0
+        return anomaly_detector.compute_certified_anomaly_score(candidate_embedding)
 
     @staticmethod
     def evaluate_historical_consistency(candidate_text: str, candidate_embedding: List[float]) -> float:
@@ -104,6 +140,18 @@ class TrustSignals:
                 if subject in cand_lower and subject in mem_lower:
                     if sim > 0.30 and cand_lower != mem_lower:
                         contradiction_penalty += 0.50
+
+        # 3. Topic-agnostic revision-language check: a candidate using overwrite/reversal
+        # language (regardless of subject matter) that is also semantically close to an
+        # existing accepted memory is treated as a likely unauthorized overwrite, even when
+        # the topic falls outside the hardcoded domain_clusters/clash_subjects above.
+        if contradiction_penalty == 0.0 and any(re.search(pat, cand_lower) for pat in REVISION_MARKER_PATTERNS):
+            closest_sim = top_similar[0][1] if top_similar else 0.0
+            if closest_sim > 0.35:
+                # 0.60, not 0.55: 0.95 - 0.55 lands at exactly 0.40, which fails to trigger
+                # the critical-signal veto's strict "< 0.40" condition (found by testing under
+                # real Gemini embeddings, where this boundary case actually occurs in practice).
+                contradiction_penalty += 0.60
 
         consistency_score = 0.95 - contradiction_penalty
         return float(np.clip(consistency_score, 0.05, 1.0))
@@ -222,6 +270,14 @@ class TrustSignals:
                 "disable security", "i am the lead"
             ]
             if any(marker in t_lower for marker in destructive_markers):
+                base_reliability = min(base_reliability, 0.25)
+
+            # Broader, topic-agnostic check: an unverified conversational message claiming
+            # to *be* (or speak for) a privileged role, e.g. "this is the CEO", "Dr. Chen has
+            # approved...", "this is your bank's fraud department". This is exactly the kind of
+            # unverified authority claim this signal exists to catch, regardless of the
+            # specific role named.
+            if AUTHORITY_CLAIM_PATTERN.search(t_lower):
                 base_reliability = min(base_reliability, 0.25)
 
         return base_reliability

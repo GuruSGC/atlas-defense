@@ -42,8 +42,8 @@ class TrustEngine:
             context_text or candidate.extracted_from_turn
         )
 
-        # 2. Embedding Anomaly (Isolation Forest)
-        emb_anom = self.signal_evaluator.evaluate_embedding_anomaly(candidate.embedding)
+        # 2. Embedding Anomaly (Isolation Forest, randomized-smoothing certified)
+        emb_anom, emb_anom_radius = self.signal_evaluator.evaluate_embedding_anomaly(candidate.embedding)
 
         # 3. Historical Consistency
         hist_cons = self.signal_evaluator.evaluate_historical_consistency(
@@ -70,7 +70,8 @@ class TrustEngine:
             historical_consistency=round(hist_cons, 4),
             behavioral_consistency=round(behav_cons, 4),
             source_reliability=round(source_rel, 4),
-            temporal_trust=round(temp_trust, 4)
+            temporal_trust=round(temp_trust, 4),
+            embedding_anomaly_certified_radius=round(emb_anom_radius, 5)
         )
 
         trust_score, status, weighted_contribs, reason = self.scoring.compute_trust_score(

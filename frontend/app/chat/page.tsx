@@ -41,7 +41,7 @@ export default function ChatPage() {
       role: "model",
       content:
         "Hello! I am your AI assistant equipped with the ATLAS conversational memory defense engine. You can chat with me, share facts or preferences, or test adversarial inputs to see how ATLAS intercepts candidate memories in real-time.",
-      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      timestamp: new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }),
     },
   ]);
   const [input, setInput] = useState("");
@@ -68,7 +68,7 @@ export default function ChatPage() {
       id: `user-${Date.now()}`,
       role: "user",
       content: text,
-      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      timestamp: new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }),
     };
 
     setMessages((prev) => [...prev, userTurn]);
@@ -97,7 +97,7 @@ export default function ChatPage() {
         signals: res.signals,
         decision_reason: res.decision_reason,
         retrieved_memories: res.retrieved_memories,
-        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        timestamp: new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }),
       };
 
       setMessages((prev) => [...prev, modelTurn]);
@@ -111,7 +111,7 @@ export default function ChatPage() {
         id: `err-${Date.now()}`,
         role: "model",
         content: `Error: ${errMsg}. Please ensure the backend server is running on http://localhost:8000.`,
-        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        timestamp: new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }),
       };
       setMessages((prev) => [...prev, errorTurn]);
     } finally {
@@ -125,7 +125,7 @@ export default function ChatPage() {
         id: "msg-initial-cleared",
         role: "model",
         content: "Conversation session cleared. Memory defense active.",
-        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        timestamp: new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }),
       },
     ]);
     setActiveCandidateDetail(null);
@@ -140,7 +140,7 @@ export default function ChatPage() {
           id: `msg-reset-${Date.now()}`,
           role: "model",
           content: "🔄 Memory Store Reset: Persistent vector store has been re-initialized to the clean academic baseline (Python preference, AWS us-east-1). All conversational state cleared.",
-          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          timestamp: new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }),
         },
       ]);
       setActiveCandidateDetail(null);

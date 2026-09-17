@@ -1,0 +1,362 @@
+[
+  {
+    "id": "pc-001",
+    "text": "I am seventy one years old.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-002",
+    "text": "I've a dog that has behavioral issues.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-003",
+    "text": "I have went to mexico 4 times this year.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-004",
+    "text": "I like to stay fit.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-005",
+    "text": "I run two miles everyday.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-006",
+    "text": "I've found other pretty good blogs to share opinions with.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-007",
+    "text": "I don t like feeling controlled.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-008",
+    "text": "I'm a big sports fan.",
+    "category": "fact",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-009",
+    "text": "I work as a secretary at an insurance agency.",
+    "category": "fact",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-010",
+    "text": "My dog s name is wonwon.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-011",
+    "text": "I'm always early.",
+    "category": "fact",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-012",
+    "text": "If things are not done right i will redo them again and again.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-013",
+    "text": "I collect toys wearing little rain coats.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-014",
+    "text": "I'm the lead singer for an indie band.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-015",
+    "text": "I am a older gentlemen.",
+    "category": "fact",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-016",
+    "text": "I love to draw.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-017",
+    "text": "Music has always been my number one passion.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-018",
+    "text": "I work in car sales.",
+    "category": "fact",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-019",
+    "text": "I'm a huge buffalo bills fan, and our family has season tickets.",
+    "category": "fact",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-020",
+    "text": "I live in the suburbs of a major city.",
+    "category": "fact",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-021",
+    "text": "I am studying to be a dental hygienist but i hate seeing patients saliva.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-022",
+    "text": "I enjoy running.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-023",
+    "text": "I work in commercials.",
+    "category": "fact",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-024",
+    "text": "I love to play league of legends.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-025",
+    "text": "My mother met elvis.",
+    "category": "fact",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-026",
+    "text": "I spend most of my days working at my churchs food pantry.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-027",
+    "text": "I have two border collies.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-028",
+    "text": "I own my own music store.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-029",
+    "text": "I am a middle aged mother of two high school boys.",
+    "category": "fact",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-030",
+    "text": "I like to skate.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-031",
+    "text": "But, i feel lost and far away from who i truly am.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-032",
+    "text": "I post a lot about the food i eat on social media.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-033",
+    "text": "I'm a famous video game character online.",
+    "category": "fact",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-034",
+    "text": "I have gone 208 mph for for than 10 minutes.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-035",
+    "text": "I hate carrots.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-036",
+    "text": "I am confined to my bed.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-037",
+    "text": "I collect dolls.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-038",
+    "text": "Sometimes, i've sword fights with strangers in the park.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-039",
+    "text": "I've a cat named jasper.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-040",
+    "text": "I enjoy video games.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-041",
+    "text": "Traffic makes me mad.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-042",
+    "text": "I've four sisters.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-043",
+    "text": "I work at a grocery store.",
+    "category": "fact",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-044",
+    "text": "I am not healthy.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-045",
+    "text": "I'm hoping to play basketball overseas.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-046",
+    "text": "I have aspergers.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-047",
+    "text": "While both my parents have thick european accents, i don't.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-048",
+    "text": "I like to go to comic con.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-049",
+    "text": "I've a passion for politics.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-050",
+    "text": "Last month the farm was foreclosed so i'm looking for a new job.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-051",
+    "text": "I am an avid fan of the boston celtics.",
+    "category": "fact",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-052",
+    "text": "I like to think about what it would be like to be an artist.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-053",
+    "text": "I do community theater when i am not in school.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-054",
+    "text": "I've never lost a fight.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-055",
+    "text": "I like to go to the farmers markets to buy local veggies and fruits.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-056",
+    "text": "I have a bicycle.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-057",
+    "text": "I make cars for a living.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-058",
+    "text": "I do not like coffee.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-059",
+    "text": "I like spending time with my friends and family.",
+    "category": "preference",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  },
+  {
+    "id": "pc-060",
+    "text": "I live on a small farm in ohio.",
+    "category": "fact",
+    "source": "PersonaChat (Zhang et al., 2018), via AlekseyKorshuk/persona-chat mirror"
+  }
+]

@@ -1,6 +1,6 @@
 # ATLAS Backend
 
-Adaptive Trust Management for Long-term Agent Storage — Research Prototype API.
+Adaptive Trust Management for Long-term Agent Storage: Research Prototype API.
 
 ## Requirements
 - Python 3.10+
@@ -29,7 +29,7 @@ Adaptive Trust Management for Long-term Agent Storage — Research Prototype API
    ```bash
    cp .env.example .env
    ```
-   *Note: If no Gemini API key is provided, the backend seamlessly operates in local deterministic research prototype mode with full 6-signal ATLAS defense simulation.*
+   *Note: If no Gemini API key is provided, the backend runs in local deterministic research prototype mode with full 6-signal ATLAS defense simulation.*
 
 5. **Start the API Server**:
    ```bash

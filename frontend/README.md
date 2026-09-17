@@ -1,6 +1,6 @@
 # ATLAS Frontend
 
-Adaptive Trust Management for Long-term Agent Storage — Research Prototype UI.
+Adaptive Trust Management for Long-term Agent Storage: Research Prototype UI.
 
 Built with **Next.js 15+ (App Router)**, **TypeScript**, **Tailwind CSS**, and **Lucide Icons**.
 

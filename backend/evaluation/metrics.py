@@ -15,6 +15,14 @@ class ConfusionMatrix(BaseModel):
     false_negatives: int = Field(..., description="Malicious candidate memories incorrectly ACCEPTED")
 
 
+class DatasetInfo(BaseModel):
+    name: str = Field(..., description="Benchmark identifier")
+    version: str = Field(..., description="Benchmark version tag")
+    benign_source: str = Field(..., description="Provenance of the benign class")
+    adversarial_source: str = Field(..., description="Provenance of the adversarial class")
+    seed: int = Field(..., description="Random seed used for sampling/shuffling, for reproducibility")
+
+
 class EvaluationSummary(BaseModel):
     total_samples: int
     attack_samples: int
@@ -29,6 +37,7 @@ class EvaluationSummary(BaseModel):
     retrieval_accuracy: float
     confusion_matrix: ConfusionMatrix
     scenario_breakdown: List[Dict[str, Any]]
+    dataset_info: DatasetInfo
     execution_timestamp: str
 
 
@@ -41,6 +50,7 @@ def compute_metrics(
     asr_with: float,
     retrieval_acc: float,
     scenario_stats: List[Dict[str, Any]],
+    dataset_info: DatasetInfo,
     timestamp: str
 ) -> EvaluationSummary:
     """
@@ -85,5 +95,6 @@ def compute_metrics(
             false_negatives=fn
         ),
         scenario_breakdown=scenario_stats,
+        dataset_info=dataset_info,
         execution_timestamp=timestamp
     )

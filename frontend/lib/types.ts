@@ -18,6 +18,8 @@ export interface TrustSignalsBreakdown {
   behavioral_consistency: number;
   source_reliability: number;
   temporal_trust: number;
+  /** Randomized-smoothing certified L2 radius for embedding_anomaly (diagnostic only). */
+  embedding_anomaly_certified_radius?: number | null;
 }
 
 export interface CandidateMemory {
@@ -142,6 +144,14 @@ export interface ScenarioBreakdownItem {
   defense_rate: number;
 }
 
+export interface DatasetInfo {
+  name: string;
+  version: string;
+  benign_source: string;
+  adversarial_source: string;
+  seed: number;
+}
+
 export interface EvaluationSummary {
   total_samples: number;
   attack_samples: number;
@@ -156,6 +166,7 @@ export interface EvaluationSummary {
   retrieval_accuracy: number;
   confusion_matrix: ConfusionMatrix;
   scenario_breakdown: ScenarioBreakdownItem[];
+  dataset_info: DatasetInfo;
   execution_timestamp: string;
 }
 

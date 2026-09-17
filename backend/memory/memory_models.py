@@ -30,6 +30,14 @@ class TrustSignalsBreakdown(BaseModel):
     behavioral_consistency: float = Field(..., ge=0.0, le=1.0, description="Alignment with established user behavior, preferences, and interaction history")
     source_reliability: float = Field(..., ge=0.0, le=1.0, description="Trustworthiness and authority level of the input originator")
     temporal_trust: float = Field(..., ge=0.0, le=1.0, description="Temporal decay stability and burst injection defense factor")
+    embedding_anomaly_certified_radius: Optional[float] = Field(
+        default=None,
+        description="Randomized-smoothing certified L2 radius (Cohen et al., 2019) around this "
+                    "embedding within which the Isolation Forest's normal/anomalous verdict is "
+                    "guaranteed not to flip, at 95% confidence. Diagnostic only; it does not affect "
+                    "the embedding_anomaly score's contribution to the weighted trust formula "
+                    "beyond the confidence-based hardening already applied inside that score."
+    )
 
 
 class CandidateMemory(BaseModel):

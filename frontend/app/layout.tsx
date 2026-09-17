@@ -4,7 +4,7 @@ import { Sidebar } from "@/components/layout/Sidebar";
 import { Header } from "@/components/layout/Header";
 
 export const metadata: Metadata = {
-  title: "ATLAS — Conversational Memory Defense Prototype",
+  title: "ATLAS: Conversational Memory Defense Prototype",
   description:
     "Trust Management for Defending Persistent LLM Agents Against Conversational Memory Poisoning",
 };
