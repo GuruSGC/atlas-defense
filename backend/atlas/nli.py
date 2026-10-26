@@ -24,6 +24,7 @@ class NLIContradictionChecker:
         self._loader = loader
         self._model = None
         self._contradiction_index = 0
+        self._cache: dict = {}
         self.available: Optional[bool] = None
         self.error: str = ""
 
@@ -56,9 +57,32 @@ class NLIContradictionChecker:
         return float(raw[0, self._contradiction_index])
 
     def contradiction_probabilities(self, pairs: List[tuple]) -> List[Optional[float]]:
-        return [self.contradiction_probability(p, h) for p, h in pairs]
+        """One batched model call for several (premise, hypothesis) pairs."""
+        if not pairs:
+            return []
+        if not self._load():
+            return [None] * len(pairs)
+        todo = [p for p in dict.fromkeys(map(tuple, pairs)) if p not in self._cache]
+        if todo:
+            raw = np.asarray(self._model.predict(todo), dtype=float).reshape(len(todo), -1)
+            if not (np.all(raw >= 0.0) and np.allclose(raw.sum(axis=1), 1.0, atol=1e-3)):
+                raw = _softmax(raw)
+            for p, v in zip(todo, raw[:, self._contradiction_index]):
+                self._cache[p] = float(v)
+        return [self._cache[tuple(p)] for p in pairs]
 
 
 def build_nli_checker() -> Optional[NLIContradictionChecker]:
     """A checker when USE_NLI is on, otherwise None so the signal uses rules only."""
     return NLIContradictionChecker() if settings.USE_NLI else None
+
+
+_shared: Optional[NLIContradictionChecker] = None
+
+
+def get_nli_checker() -> Optional[NLIContradictionChecker]:
+    """One shared checker for the process. It loads the model on first use."""
+    global _shared
+    if _shared is None:
+        _shared = NLIContradictionChecker()
+    return _shared if _shared._load() else None

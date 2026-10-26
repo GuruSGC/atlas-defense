@@ -10,6 +10,7 @@ from fastapi import APIRouter, HTTPException
 from evaluation.metrics import EvaluationReport, EvaluationSummary
 from evaluation.experiment_runner import experiment_runner
 from evaluation.run_report import RESULTS_PATH
+from evaluation.run_v4 import MERGED as V4_PATH
 
 router = APIRouter(prefix="/evaluation", tags=["Evaluation"])
 
@@ -50,3 +51,15 @@ async def run_full_report(seeds: int = 10, live: bool = False) -> EvaluationRepo
     Recompute the full report. This takes a few minutes.
     """
     return experiment_runner.run_full_report(seeds=seeds, live=live)
+
+
+@router.get("/v4")
+async def get_benchmark_v4() -> dict:
+    """
+    Benchmark v4: composition of the 1,700-case benchmark, the ablation ladder, baselines, anomaly detectors,
+    the learned classifier, the adaptive adversary, and sensitivity analyses. Served from
+    evaluation/results/benchmark_v4.json, which `python -m evaluation.run_v4 compose` writes.
+    """
+    if V4_PATH.exists():
+        return json.loads(V4_PATH.read_text(encoding="utf-8"))
+    raise HTTPException(status_code=404, detail="No v4 results yet. Run python -m evaluation.run_v4 compose.")

@@ -51,17 +51,25 @@ class Settings(BaseSettings):
     # Anomaly Detection Parameters
     ISOLATION_FOREST_CONTAMINATION: float = 0.10
     EMBEDDING_DIMENSION: int = 128
+    EMBEDDING_BACKEND: str = Field(default="auto", env="EMBEDDING_BACKEND")   # auto, hash, or local
     MOCK_MODE_FORCED: bool = False
 
     # Vector storage: memory (default), sqlite, or faiss (needs faiss-cpu)
     VECTOR_STORE_BACKEND: str = Field(default="memory", env="VECTOR_STORE_BACKEND")
     VECTOR_STORE_PATH: str = Field(default="data/atlas_memory.db", env="VECTOR_STORE_PATH")
 
+    # Learned and semantic components
+    BEHAV_MODE: str = Field(default="hybrid", env="BEHAV_MODE")             # regex, learned, or hybrid
+    HIST_MODE: str = Field(default="clusters", env="HIST_MODE")             # clusters, nli, or hybrid
+    ANOMALY_DETECTOR: str = Field(default="iforest", env="ANOMALY_DETECTOR")  # iforest or knn
+    POISON_MODEL_PATH: str = Field(default="models/poison_clf", env="POISON_MODEL_PATH")
+
     # Optional NLI cross-encoder for contradiction checks (needs sentence-transformers)
     USE_NLI: bool = Field(default=False, env="USE_NLI")
     NLI_MODEL: str = Field(default="cross-encoder/nli-deberta-v3-xsmall", env="NLI_MODEL")
     NLI_GATE: str = Field(default="slot", env="NLI_GATE")            # slot, related, or none
     NLI_THRESHOLD: float = Field(default=0.90, env="NLI_THRESHOLD")
+    NLI_MIN_SIMILARITY: float = Field(default=0.62, env="NLI_MIN_SIMILARITY")   # semantic NLI modes only
     
     class Config:
         env_file = str(BASE_DIR / ".env")

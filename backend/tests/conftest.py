@@ -13,7 +13,16 @@ from atlas.anomaly_detector import anomaly_detector
 from atlas.trust_engine import trust_engine
 
 embedding_service.is_real_mode = False
+embedding_service.set_backend("hash")
 gemini_client.is_real_mode = False
+
+from core.settings import settings
+
+# The unit tests exercise the rule-based path; the learned and NLI paths are tested with stand-ins.
+settings.BEHAV_MODE = "regex"
+settings.HIST_MODE = "clusters"
+settings.ANOMALY_DETECTOR = "iforest"
+anomaly_detector.kind = "iforest"
 
 
 @pytest.fixture
@@ -27,14 +36,14 @@ def store():
 @pytest.fixture
 def clean_state(store):
     """Baseline anomaly detector and empty insertion history, restored afterwards."""
-    saved = (anomaly_detector.model, anomaly_detector._is_fitted, anomaly_detector.fit_count,
-             anomaly_detector._accepted_at_last_fit, anomaly_detector.seed, anomaly_detector._baseline)
+    import copy
+    saved = copy.copy(anomaly_detector.__dict__)
     saved_events = list(trust_engine.temporal._events)
     anomaly_detector.reset(42)
     trust_engine.temporal.reset()
     yield store
-    (anomaly_detector.model, anomaly_detector._is_fitted, anomaly_detector.fit_count,
-     anomaly_detector._accepted_at_last_fit, anomaly_detector.seed, anomaly_detector._baseline) = saved
+    anomaly_detector.__dict__.clear()
+    anomaly_detector.__dict__.update(saved)
     trust_engine.temporal._events.clear()
     trust_engine.temporal._events.extend(saved_events)
 

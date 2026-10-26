@@ -1,0 +1,11 @@
+{
+ "auc": 0.872,
+ "tpr_at_1pct_fpr": 0.0452,
+ "tpr_at_5pct_fpr": 0.2169,
+ "n_attack": 332,
+ "n_benign": 304,
+ "length_matched": {
+  "n": 390,
+  "auc": 0.8595
+ }
+}

@@ -86,6 +86,47 @@ directives). Its recall of 82.5% is therefore optimistic. The evasion set was
 written after the detectors were frozen and scored once, and it is the more honest
 test of generalisation (6.7% recall; see the root README).
 
+## Benchmark v4: public sources
+
+The 120 authored cases above are too few and too close to the people who wrote the detectors, so the benchmark
+now also draws on public data. The public files are not committed. `python -m evaluation.public_data` downloads
+the upstream files once into `public_cache/` and writes the selected items to `public/` (both git-ignored). Every
+random choice uses a fixed seed, so two machines build the same sets.
+
+| Source | Kind | Items | What it is | License |
+|---|---|---|---|---|
+| `injecagent` | attack | 62 | Attacker instructions from InjecAgent (tool-use attacks) | see repository |
+| `deepset` | attack | 154 | English injections in `deepset/prompt-injections` | Apache-2.0 |
+| `gandalf` | attack | 150 | `Lakera/gandalf_ignore_instructions` | MIT |
+| `safeguard` | attack | 300 | Injections in `xTRam1/safe-guard-prompt-injection` | unspecified |
+| `poisonedrag` | attack | 200 | Poisoned passages from PoisonedRAG, with the question each one targets | MIT |
+| `personachat` | benign | 392 | PersonaChat persona statements, tidied | unspecified |
+| `oasst1` | benign | 228 | English OpenAssistant user messages that state preferences, setups or standing instructions | Apache-2.0 |
+
+Together with the authored sets that is 1,736 cases (996 attacks, 740 benign). Items are de-duplicated across
+sources, capped at 400 characters, and split into train (60%) and test (40%) by a hash of the text. The authored
+development set is train; the authored held-out and paraphrase sets are test.
+
+Things to know before reading any number from this benchmark:
+
+- **Attack labels are about content, not provenance.** These are prompts and passages that someone wrote to
+  manipulate an assistant. Whether storing one is harmful in a real deployment depends on where it came from.
+  A benign user preference ("always answer in French") and an injected instruction can read alike.
+- **PoisonedRAG items are false facts.** A text classifier cannot know they are false. They are scored as attacks
+  anyway, and they are the one place where historical consistency against a stored fact matters (see
+  `history_eval.py`).
+- **Style differs between sources.** PersonaChat statements are short and informal; the attacks are longer.
+  A classifier that only learned style would look good here. A style-only control (length, punctuation,
+  capitalisation) is run alongside, and leave-one-source-out training tests whether the classifier carries over to
+  a source it has not seen. OpenAssistant is included for exactly this reason: its benign messages are long and
+  instruction-heavy.
+- **Nothing public was inspected before the rules were frozen.** The rule-based prototype was scored on every item
+  before any learned component was built, and that run is kept in `results/frozen_heuristics_v4.json`.
+
+`profile_contradictions.json` (259 cases, committed) is generated: each case has three PersonaChat statements
+that count as accepted memories, one consistent new statement, and one statement that contradicts a stored line.
+The contradictions were written by a language model from the fixed prompt stored in the file.
+
 ## Evaluation protocols
 
 The first version of the benchmark built each candidate memory from the ground

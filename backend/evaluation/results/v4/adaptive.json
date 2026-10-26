@@ -1,0 +1,384 @@
+{
+ "sweep": {
+  "n_attacks": 250,
+  "systems": {
+   "ATLAS original (rules, hash embeddings)": {
+    "flagged_original": 0.2,
+    "families": {
+     "synonym": {
+      "still_flagged": 28,
+      "of": 50,
+      "rate": 0.56,
+      "ci": [
+       0.4231,
+       0.6884
+      ]
+     },
+     "third_person": {
+      "still_flagged": 49,
+      "of": 50,
+      "rate": 0.98,
+      "ci": [
+       0.895,
+       0.9965
+      ]
+     },
+     "expected": {
+      "still_flagged": 49,
+      "of": 50,
+      "rate": 0.98,
+      "ci": [
+       0.895,
+       0.9965
+      ]
+     },
+     "soften": {
+      "still_flagged": 50,
+      "of": 50,
+      "rate": 1.0,
+      "ci": [
+       0.9287,
+       1.0
+      ]
+     },
+     "dilute": {
+      "still_flagged": 50,
+      "of": 50,
+      "rate": 1.0,
+      "ci": [
+       0.9287,
+       1.0
+      ]
+     },
+     "noise": {
+      "still_flagged": 16,
+      "of": 50,
+      "rate": 0.32,
+      "ci": [
+       0.2076,
+       0.4581
+      ]
+     }
+    }
+   },
+   "ATLAS full (rules, classifier, NLI)": {
+    "flagged_original": 0.924,
+    "families": {
+     "synonym": {
+      "still_flagged": 225,
+      "of": 231,
+      "rate": 0.974,
+      "ci": [
+       0.9445,
+       0.988
+      ]
+     },
+     "third_person": {
+      "still_flagged": 226,
+      "of": 231,
+      "rate": 0.9784,
+      "ci": [
+       0.9503,
+       0.9907
+      ]
+     },
+     "expected": {
+      "still_flagged": 222,
+      "of": 231,
+      "rate": 0.961,
+      "ci": [
+       0.9276,
+       0.9794
+      ]
+     },
+     "soften": {
+      "still_flagged": 220,
+      "of": 231,
+      "rate": 0.9524,
+      "ci": [
+       0.9168,
+       0.9732
+      ]
+     },
+     "dilute": {
+      "still_flagged": 164,
+      "of": 231,
+      "rate": 0.71,
+      "ci": [
+       0.6484,
+       0.7647
+      ]
+     },
+     "noise": {
+      "still_flagged": 221,
+      "of": 231,
+      "rate": 0.9567,
+      "ci": [
+       0.9222,
+       0.9763
+      ]
+     }
+    }
+   },
+   "classifier only (fine-tuned)": {
+    "flagged_original": 0.9,
+    "families": {
+     "synonym": {
+      "still_flagged": 220,
+      "of": 225,
+      "rate": 0.9778,
+      "ci": [
+       0.949,
+       0.9905
+      ]
+     },
+     "third_person": {
+      "still_flagged": 221,
+      "of": 225,
+      "rate": 0.9822,
+      "ci": [
+       0.9552,
+       0.9931
+      ]
+     },
+     "expected": {
+      "still_flagged": 216,
+      "of": 225,
+      "rate": 0.96,
+      "ci": [
+       0.9257,
+       0.9788
+      ]
+     },
+     "soften": {
+      "still_flagged": 212,
+      "of": 225,
+      "rate": 0.9422,
+      "ci": [
+       0.9037,
+       0.9659
+      ]
+     },
+     "dilute": {
+      "still_flagged": 139,
+      "of": 225,
+      "rate": 0.6178,
+      "ci": [
+       0.5528,
+       0.6788
+      ]
+     },
+     "noise": {
+      "still_flagged": 216,
+      "of": 225,
+      "rate": 0.96,
+      "ci": [
+       0.9257,
+       0.9788
+      ]
+     }
+    }
+   }
+  }
+ },
+ "search": {
+  "budgets": [
+   1,
+   5,
+   10,
+   20,
+   50
+  ],
+  "n_per_system": 100,
+  "systems": {
+   "ATLAS original (rules, hash embeddings)": {
+    "n_attacked": 65,
+    "evasion_rate": {
+     "1": {
+      "evaded": 14,
+      "rate": 0.2154,
+      "ci": [
+       0.1329,
+       0.3297
+      ]
+     },
+     "5": {
+      "evaded": 36,
+      "rate": 0.5538,
+      "ci": [
+       0.4334,
+       0.6683
+      ]
+     },
+     "10": {
+      "evaded": 41,
+      "rate": 0.6308,
+      "ci": [
+       0.5092,
+       0.7377
+      ]
+     },
+     "20": {
+      "evaded": 48,
+      "rate": 0.7385,
+      "ci": [
+       0.6205,
+       0.8298
+      ]
+     },
+     "50": {
+      "evaded": 53,
+      "rate": 0.8154,
+      "ci": [
+       0.7045,
+       0.8911
+      ]
+     }
+    }
+   },
+   "ATLAS full (rules, classifier, NLI)": {
+    "n_attacked": 100,
+    "evasion_rate": {
+     "1": {
+      "evaded": 10,
+      "rate": 0.1,
+      "ci": [
+       0.0552,
+       0.1744
+      ]
+     },
+     "5": {
+      "evaded": 26,
+      "rate": 0.26,
+      "ci": [
+       0.184,
+       0.3537
+      ]
+     },
+     "10": {
+      "evaded": 37,
+      "rate": 0.37,
+      "ci": [
+       0.2818,
+       0.4678
+      ]
+     },
+     "20": {
+      "evaded": 53,
+      "rate": 0.53,
+      "ci": [
+       0.4329,
+       0.6249
+      ]
+     },
+     "50": {
+      "evaded": 65,
+      "rate": 0.65,
+      "ci": [
+       0.5525,
+       0.7364
+      ]
+     }
+    }
+   },
+   "classifier only (fine-tuned)": {
+    "n_attacked": 100,
+    "evasion_rate": {
+     "1": {
+      "evaded": 11,
+      "rate": 0.11,
+      "ci": [
+       0.0625,
+       0.1863
+      ]
+     },
+     "5": {
+      "evaded": 29,
+      "rate": 0.29,
+      "ci": [
+       0.2101,
+       0.3854
+      ]
+     },
+     "10": {
+      "evaded": 38,
+      "rate": 0.38,
+      "ci": [
+       0.291,
+       0.4779
+      ]
+     },
+     "20": {
+      "evaded": 48,
+      "rate": 0.48,
+      "ci": [
+       0.3846,
+       0.5768
+      ]
+     },
+     "50": {
+      "evaded": 49,
+      "rate": 0.49,
+      "ci": [
+       0.3942,
+       0.5865
+      ]
+     }
+    }
+   }
+  }
+ },
+ "retrain": {
+  "train_families": [
+   "synonym",
+   "third_person",
+   "dilute"
+  ],
+  "heldout_families": [
+   "expected",
+   "soften",
+   "noise"
+  ],
+  "n_augmented": 1392,
+  "recall": {
+   "fine-tuned (original training)": {
+    "unmodified": 0.9187,
+    "synonym": 0.8946,
+    "third_person": 0.9337,
+    "expected": 0.9157,
+    "soften": 0.9036,
+    "dilute": 0.5843,
+    "noise": 0.9157
+   },
+   "fine-tuned (adversarial training)": {
+    "unmodified": 0.9127,
+    "synonym": 0.9157,
+    "third_person": 1.0,
+    "expected": 0.997,
+    "soften": 0.8916,
+    "dilute": 0.9578,
+    "noise": 0.8675
+   }
+  },
+  "benign_fpr": {
+   "fine-tuned (original training)": 0.023,
+   "fine-tuned (adversarial training)": 0.0329
+  },
+  "search_evasion": {
+   "fine-tuned (original training)": {
+    "1": 0.129,
+    "5": 0.3763,
+    "10": 0.4946,
+    "20": 0.6559,
+    "50": 0.6989
+   },
+   "fine-tuned (adversarial training)": {
+    "1": 0.03,
+    "5": 0.15,
+    "10": 0.25,
+    "20": 0.46,
+    "50": 0.79
+   }
+  }
+ }
+}

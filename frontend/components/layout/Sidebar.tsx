@@ -121,7 +121,7 @@ export const Sidebar: React.FC = () => {
             <span className="font-mono text-slate-400 text-[10px]">T = 0.65</span>
           </div>
           <div className="flex items-center gap-1 text-[10px] text-slate-500">
-            <Cpu className="w-3 h-3" /> Isolation Forest + 6 Signals
+            <Cpu className="w-3 h-3" /> Learned + rule-based, 6 signals
           </div>
         </div>
       </div>

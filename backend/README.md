@@ -72,6 +72,32 @@ There is no hosted (pgvector or Supabase) store.
 consistency signal (`NLI_MODEL`, `NLI_GATE`, `NLI_THRESHOLD`). It is off by default
 because on this benchmark it adds no recall; see the root README for the numbers.
 
+## Learned components and the v4 benchmark
+
+The rule-based signals only know the wordings someone thought of, so v4 adds learned components and
+a benchmark that does not come from the people who wrote the rules.
+
+| Part | Where | Notes |
+|---|---|---|
+| Local sentence embeddings | `core/embeddings.py` | `EMBEDDING_BACKEND=local` uses `all-MiniLM-L6-v2` (384 dimensions, CPU). `hash` and Gemini still work. |
+| Poisoning classifier | `atlas/learned.py` | A fine-tuned MiniLM classifier (or a logistic regression on frozen embeddings), calibrated with Platt scaling. It sets an upper bound on behavioural consistency. `BEHAV_MODE=regex|learned|hybrid`. |
+| Profile-fitted anomaly detector | `atlas/anomaly_detector.py` | The isolation forest or a kNN-distance detector can start from real benign embeddings (`set_profile`) instead of 50 random vectors. `ANOMALY_DETECTOR=iforest|knn`. |
+| NLI historical consistency | `atlas/signals.py`, `atlas/nli.py` | Related memories are found by embedding similarity and an NLI cross-encoder scores contradiction. `HIST_MODE=clusters|nli|hybrid`. |
+
+```bash
+cd backend
+pip install -r requirements-dev.txt -r requirements-optional.txt
+python -m evaluation.run_v4 data          # downloads the public sources once (needs network)
+python -m evaluation.run_v4 classifier    # trains both classifiers on the train split (about 8 minutes for the fine-tuned one)
+python -m evaluation.run_v4 anomaly history ladder baselines sensitivity
+python -m evaluation.run_v4 adaptive prb llm latency    # these use the live model or take longer
+python -m evaluation.run_v4 compose       # writes evaluation/results/benchmark_v4.json for the dashboard
+```
+
+Trained models go to `models/` (git-ignored): `models/poison_clf` is the fine-tuned classifier and `models/poison_logreg` the lightweight one. The public sources are fetched by `evaluation/public_data.py` into `evaluation/data/public/`, which is also git-ignored. Without the trained models the behavioural signal uses the rules alone. The
+leave-one-source-out run (`run_v4 loso`) retrains the fine-tuned classifier six times and takes about an hour on a
+CPU. Every step writes its own file under `evaluation/results/v4/`, so one step can be rerun on its own.
+
 ## Tests and reports
 
 ```bash

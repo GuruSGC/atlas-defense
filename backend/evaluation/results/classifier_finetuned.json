@@ -1,0 +1,142 @@
+{
+ "meta": {
+  "kind": "finetuned",
+  "n_train": 765,
+  "n_calibration": 135,
+  "epochs": 4,
+  "seed": 0,
+  "platt": [
+   157.5269694956445,
+   -538.1387155519026
+  ]
+ },
+ "seconds": 432,
+ "test": {
+  "overall": {
+   "n_attack": 332,
+   "n_benign": 304,
+   "auc": 0.9918,
+   "tpr_at_1pct_fpr": 0.8946,
+   "tpr_at_5pct_fpr": 0.9488,
+   "recall_p50": 0.9187,
+   "fpr_p50": 0.023,
+   "fpr_p50_ci": [
+    0.0112,
+    0.0468
+   ]
+  },
+  "per_source": {
+   "authored:evasion_adversarial": {
+    "n_attack": 30,
+    "n_benign": 304,
+    "auc": 0.963,
+    "tpr_at_1pct_fpr": 0.5333,
+    "tpr_at_5pct_fpr": 0.7667,
+    "recall_p50": 0.6333,
+    "fpr_p50": 0.023,
+    "fpr_p50_ci": [
+     0.0112,
+     0.0468
+    ]
+   },
+   "authored:heldout_adversarial": {
+    "n_attack": 40,
+    "n_benign": 304,
+    "auc": 0.9787,
+    "tpr_at_1pct_fpr": 0.825,
+    "tpr_at_5pct_fpr": 0.85,
+    "recall_p50": 0.85,
+    "fpr_p50": 0.023,
+    "fpr_p50_ci": [
+     0.0112,
+     0.0468
+    ]
+   },
+   "deepset": {
+    "n_attack": 68,
+    "n_benign": 304,
+    "auc": 0.9946,
+    "tpr_at_1pct_fpr": 0.8971,
+    "tpr_at_5pct_fpr": 0.9853,
+    "recall_p50": 0.9412,
+    "fpr_p50": 0.023,
+    "fpr_p50_ci": [
+     0.0112,
+     0.0468
+    ]
+   },
+   "gandalf": {
+    "n_attack": 57,
+    "n_benign": 304,
+    "auc": 0.9977,
+    "tpr_at_1pct_fpr": 0.9474,
+    "tpr_at_5pct_fpr": 0.9825,
+    "recall_p50": 0.9649,
+    "fpr_p50": 0.023,
+    "fpr_p50_ci": [
+     0.0112,
+     0.0468
+    ]
+   },
+   "injecagent": {
+    "n_attack": 26,
+    "n_benign": 304,
+    "auc": 0.9944,
+    "tpr_at_1pct_fpr": 0.9231,
+    "tpr_at_5pct_fpr": 0.9615,
+    "recall_p50": 0.9231,
+    "fpr_p50": 0.023,
+    "fpr_p50_ci": [
+     0.0112,
+     0.0468
+    ]
+   },
+   "safeguard": {
+    "n_attack": 111,
+    "n_benign": 304,
+    "auc": 0.9989,
+    "tpr_at_1pct_fpr": 0.982,
+    "tpr_at_5pct_fpr": 0.991,
+    "recall_p50": 0.982,
+    "fpr_p50": 0.023,
+    "fpr_p50_ci": [
+     0.0112,
+     0.0468
+    ]
+   },
+   "authored:benign_personachat": {
+    "n_benign": 23,
+    "fpr_p50": 0.0
+   },
+   "authored:benign_technical": {
+    "n_benign": 20,
+    "fpr_p50": 0.0
+   },
+   "authored:legitimate_updates": {
+    "n_benign": 9,
+    "fpr_p50": 0.0
+   },
+   "oasst1": {
+    "n_benign": 82,
+    "fpr_p50": 0.0732
+   },
+   "personachat": {
+    "n_benign": 170,
+    "fpr_p50": 0.0059
+   }
+  },
+  "poisonedrag_not_trained_on": {
+   "n_attack": 74,
+   "n_benign": 304,
+   "auc": 0.9128,
+   "tpr_at_1pct_fpr": 0.0,
+   "tpr_at_5pct_fpr": 0.1757,
+   "recall_p50": 0.0135,
+   "fpr_p50": 0.023,
+   "fpr_p50_ci": [
+    0.0112,
+    0.0468
+   ]
+  }
+ }
+}

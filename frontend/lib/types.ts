@@ -279,3 +279,65 @@ export interface AtlasConfigResponse {
     default_weight: number;
   }[];
 }
+
+// ---- Benchmark v4 (public sources, learned components, adaptive adversary) ----
+export interface MetricRow {
+  n: number;
+  tp: number;
+  fp: number;
+  tn: number;
+  fn: number;
+  precision?: number | null;
+  recall?: number | null;
+  fpr?: number | null;
+  f1: number;
+  recall_ci?: number[];
+  fpr_ci?: number[];
+  f1_ci?: number[];
+  auc?: number;
+  auc_ci?: number[];
+  description?: string;
+  per_source?: Record<string, { n: number; flagged: number; rate: number; rate_ci: number[]; kind: string }>;
+}
+
+export interface CountRate {
+  count: number;
+  n: number;
+  rate: number | null;
+  ci: number[];
+}
+
+export interface BenchmarkV4 {
+  generated_at: string;
+  composition: { source: string; kind: string; n: number; train: number; test: number; origin: string; license: string; url: string }[];
+  totals: { cases: number; attacks: number; benign: number; public_cases: number };
+  frozen_original_on_all_items?: { per_source: Record<string, { n: number; flagged: number; rate: number }> } | null;
+  ladder?: { configs: Record<string, MetricRow> } | null;
+  baselines?: { rows: Record<string, MetricRow> } | null;
+  llm_moderator?: MetricRow | null;
+  anomaly?: {
+    detectors: Record<string, { auc: number; auc_ci?: number[]; tpr_at_1pct_fpr: number; tpr_at_5pct_fpr: number }>;
+  } | null;
+  adaptive?: {
+    search?: {
+      budgets: number[];
+      systems: Record<string, { n_attacked: number; evasion_rate: Record<string, { evaded: number; rate: number; ci: number[] }> }>;
+    };
+  } | null;
+  prb?: {
+    n: number;
+    conditions: Record<
+      string,
+      {
+        persisted: CountRate;
+        retrieved_given_persisted_or_all: CountRate;
+        behaviour_changed?: CountRate;
+        attack_success?: CountRate;
+      }
+    >;
+  } | null;
+  sensitivity?: {
+    threshold: Record<string, { recall: number; fpr: number; f1: number }>;
+    random_weights: { draws: number; recall_p5_p50_p95: number[]; fpr_p5_p50_p95: number[] };
+  } | null;
+}

@@ -16,7 +16,8 @@ import {
   AttackScenario,
   AttackSimulationResult,
   EvaluationSummary,
-  EvaluationReport
+  EvaluationReport,
+  BenchmarkV4
 } from "./types";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
@@ -134,6 +135,10 @@ class ApiClient {
 
   async getEvaluationReport(): Promise<EvaluationReport> {
     return this.request<EvaluationReport>("/api/evaluation/report");
+  }
+
+  async getBenchmarkV4(): Promise<BenchmarkV4> {
+    return this.request<BenchmarkV4>("/api/evaluation/v4");
   }
 }
 

@@ -233,7 +233,7 @@ Rules:
             if m not in models_to_try:
                 models_to_try.append(m)
 
-        with httpx.Client(timeout=15.0) as client:
+        with httpx.Client(timeout=60.0) as client:
             last_error = None
             for model_name in models_to_try:
                 clean_model = model_name.removeprefix("models/")

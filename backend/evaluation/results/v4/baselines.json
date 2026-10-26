@@ -1,0 +1,2996 @@
+{
+ "n_test": 710,
+ "n_attack": 406,
+ "n_benign": 304,
+ "rows": {
+  "no defense": {
+   "n": 710,
+   "n_attack": 406,
+   "n_benign": 304,
+   "tp": 0,
+   "fp": 0,
+   "tn": 304,
+   "fn": 406,
+   "precision": null,
+   "recall": 0.0,
+   "fpr": 0.0,
+   "f1": 0.0,
+   "recall_ci": [
+    0.0,
+    0.0094
+   ],
+   "fpr_ci": [
+    0.0,
+    0.0125
+   ],
+   "f1_ci": [
+    0.0,
+    0.0
+   ],
+   "auc": 0.5,
+   "auc_ci": [
+    0.5,
+    0.5
+   ],
+   "per_source": {
+    "authored:benign_personachat": {
+     "n": 23,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.1431
+     ],
+     "kind": "benign"
+    },
+    "authored:benign_technical": {
+     "n": 20,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.1611
+     ],
+     "kind": "benign"
+    },
+    "authored:evasion_adversarial": {
+     "n": 30,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.1135
+     ],
+     "kind": "attack"
+    },
+    "authored:heldout_adversarial": {
+     "n": 40,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0876
+     ],
+     "kind": "attack"
+    },
+    "authored:legitimate_updates": {
+     "n": 9,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.2991
+     ],
+     "kind": "benign"
+    },
+    "deepset": {
+     "n": 68,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0535
+     ],
+     "kind": "attack"
+    },
+    "gandalf": {
+     "n": 57,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0631
+     ],
+     "kind": "attack"
+    },
+    "injecagent": {
+     "n": 26,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.1287
+     ],
+     "kind": "attack"
+    },
+    "oasst1": {
+     "n": 82,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0448
+     ],
+     "kind": "benign"
+    },
+    "personachat": {
+     "n": 170,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0221
+     ],
+     "kind": "benign"
+    },
+    "poisonedrag": {
+     "n": 74,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0493
+     ],
+     "kind": "attack"
+    },
+    "safeguard": {
+     "n": 111,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0335
+     ],
+     "kind": "attack"
+    }
+   },
+   "note": ""
+  },
+  "static pattern moderation": {
+   "n": 710,
+   "n_attack": 406,
+   "n_benign": 304,
+   "tp": 17,
+   "fp": 0,
+   "tn": 304,
+   "fn": 389,
+   "precision": 1.0,
+   "recall": 0.0419,
+   "fpr": 0.0,
+   "f1": 0.0804,
+   "recall_ci": [
+    0.0263,
+    0.066
+   ],
+   "fpr_ci": [
+    0.0,
+    0.0125
+   ],
+   "precision_ci": [
+    0.8157,
+    1.0
+   ],
+   "f1_ci": [
+    0.0467,
+    0.1148
+   ],
+   "auc": 0.5209,
+   "auc_ci": [
+    0.5113,
+    0.5306
+   ],
+   "per_source": {
+    "authored:benign_personachat": {
+     "n": 23,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.1431
+     ],
+     "kind": "benign"
+    },
+    "authored:benign_technical": {
+     "n": 20,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.1611
+     ],
+     "kind": "benign"
+    },
+    "authored:evasion_adversarial": {
+     "n": 30,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.1135
+     ],
+     "kind": "attack"
+    },
+    "authored:heldout_adversarial": {
+     "n": 40,
+     "flagged": 4,
+     "rate": 0.1,
+     "rate_ci": [
+      0.0396,
+      0.2305
+     ],
+     "kind": "attack"
+    },
+    "authored:legitimate_updates": {
+     "n": 9,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.2991
+     ],
+     "kind": "benign"
+    },
+    "deepset": {
+     "n": 68,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0535
+     ],
+     "kind": "attack"
+    },
+    "gandalf": {
+     "n": 57,
+     "flagged": 8,
+     "rate": 0.1404,
+     "rate_ci": [
+      0.0729,
+      0.2532
+     ],
+     "kind": "attack"
+    },
+    "injecagent": {
+     "n": 26,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.1287
+     ],
+     "kind": "attack"
+    },
+    "oasst1": {
+     "n": 82,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0448
+     ],
+     "kind": "benign"
+    },
+    "personachat": {
+     "n": 170,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0221
+     ],
+     "kind": "benign"
+    },
+    "poisonedrag": {
+     "n": 74,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0493
+     ],
+     "kind": "attack"
+    },
+    "safeguard": {
+     "n": 111,
+     "flagged": 5,
+     "rate": 0.045,
+     "rate_ci": [
+      0.0194,
+      0.1011
+     ],
+     "kind": "attack"
+    }
+   },
+   "note": "keyword and code-pattern filter"
+  },
+  "provenance gate, unsigned attacker": {
+   "n": 710,
+   "n_attack": 406,
+   "n_benign": 304,
+   "tp": 406,
+   "fp": 0,
+   "tn": 304,
+   "fn": 0,
+   "precision": 1.0,
+   "recall": 1.0,
+   "fpr": 0.0,
+   "f1": 1.0,
+   "recall_ci": [
+    0.9906,
+    1.0
+   ],
+   "fpr_ci": [
+    0.0,
+    0.0125
+   ],
+   "precision_ci": [
+    0.9906,
+    1.0
+   ],
+   "f1_ci": [
+    1.0,
+    1.0
+   ],
+   "auc": 1.0,
+   "auc_ci": [
+    1.0,
+    1.0
+   ],
+   "per_source": {
+    "authored:benign_personachat": {
+     "n": 23,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.1431
+     ],
+     "kind": "benign"
+    },
+    "authored:benign_technical": {
+     "n": 20,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.1611
+     ],
+     "kind": "benign"
+    },
+    "authored:evasion_adversarial": {
+     "n": 30,
+     "flagged": 30,
+     "rate": 1.0,
+     "rate_ci": [
+      0.8865,
+      1.0
+     ],
+     "kind": "attack"
+    },
+    "authored:heldout_adversarial": {
+     "n": 40,
+     "flagged": 40,
+     "rate": 1.0,
+     "rate_ci": [
+      0.9124,
+      1.0
+     ],
+     "kind": "attack"
+    },
+    "authored:legitimate_updates": {
+     "n": 9,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.2991
+     ],
+     "kind": "benign"
+    },
+    "deepset": {
+     "n": 68,
+     "flagged": 68,
+     "rate": 1.0,
+     "rate_ci": [
+      0.9465,
+      1.0
+     ],
+     "kind": "attack"
+    },
+    "gandalf": {
+     "n": 57,
+     "flagged": 57,
+     "rate": 1.0,
+     "rate_ci": [
+      0.9369,
+      1.0
+     ],
+     "kind": "attack"
+    },
+    "injecagent": {
+     "n": 26,
+     "flagged": 26,
+     "rate": 1.0,
+     "rate_ci": [
+      0.8713,
+      1.0
+     ],
+     "kind": "attack"
+    },
+    "oasst1": {
+     "n": 82,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0448
+     ],
+     "kind": "benign"
+    },
+    "personachat": {
+     "n": 170,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0221
+     ],
+     "kind": "benign"
+    },
+    "poisonedrag": {
+     "n": 74,
+     "flagged": 74,
+     "rate": 1.0,
+     "rate_ci": [
+      0.9507,
+      1.0
+     ],
+     "kind": "attack"
+    },
+    "safeguard": {
+     "n": 111,
+     "flagged": 111,
+     "rate": 1.0,
+     "rate_ci": [
+      0.9665,
+      1.0
+     ],
+     "kind": "attack"
+    }
+   },
+   "note": "blocks every write without a valid signature"
+  },
+  "provenance gate, signed attacker": {
+   "n": 710,
+   "n_attack": 406,
+   "n_benign": 304,
+   "tp": 0,
+   "fp": 0,
+   "tn": 304,
+   "fn": 406,
+   "precision": null,
+   "recall": 0.0,
+   "fpr": 0.0,
+   "f1": 0.0,
+   "recall_ci": [
+    0.0,
+    0.0094
+   ],
+   "fpr_ci": [
+    0.0,
+    0.0125
+   ],
+   "f1_ci": [
+    0.0,
+    0.0
+   ],
+   "auc": 0.5,
+   "auc_ci": [
+    0.5,
+    0.5
+   ],
+   "per_source": {
+    "authored:benign_personachat": {
+     "n": 23,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.1431
+     ],
+     "kind": "benign"
+    },
+    "authored:benign_technical": {
+     "n": 20,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.1611
+     ],
+     "kind": "benign"
+    },
+    "authored:evasion_adversarial": {
+     "n": 30,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.1135
+     ],
+     "kind": "attack"
+    },
+    "authored:heldout_adversarial": {
+     "n": 40,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0876
+     ],
+     "kind": "attack"
+    },
+    "authored:legitimate_updates": {
+     "n": 9,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.2991
+     ],
+     "kind": "benign"
+    },
+    "deepset": {
+     "n": 68,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0535
+     ],
+     "kind": "attack"
+    },
+    "gandalf": {
+     "n": 57,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0631
+     ],
+     "kind": "attack"
+    },
+    "injecagent": {
+     "n": 26,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.1287
+     ],
+     "kind": "attack"
+    },
+    "oasst1": {
+     "n": 82,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0448
+     ],
+     "kind": "benign"
+    },
+    "personachat": {
+     "n": 170,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0221
+     ],
+     "kind": "benign"
+    },
+    "poisonedrag": {
+     "n": 74,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0493
+     ],
+     "kind": "attack"
+    },
+    "safeguard": {
+     "n": 111,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0335
+     ],
+     "kind": "attack"
+    }
+   },
+   "note": "the attacker uses the user's signed channel"
+  },
+  "embedding similarity threshold": {
+   "n": 710,
+   "n_attack": 406,
+   "n_benign": 304,
+   "tp": 70,
+   "fp": 11,
+   "tn": 293,
+   "fn": 336,
+   "precision": 0.8642,
+   "recall": 0.1724,
+   "fpr": 0.0362,
+   "f1": 0.2875,
+   "recall_ci": [
+    0.1388,
+    0.2122
+   ],
+   "fpr_ci": [
+    0.0203,
+    0.0636
+   ],
+   "precision_ci": [
+    0.773,
+    0.9224
+   ],
+   "f1_ci": [
+    0.2411,
+    0.3406
+   ],
+   "auc": 0.8456,
+   "auc_ci": [
+    0.8178,
+    0.8777
+   ],
+   "per_source": {
+    "authored:benign_personachat": {
+     "n": 23,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.1431
+     ],
+     "kind": "benign"
+    },
+    "authored:benign_technical": {
+     "n": 20,
+     "flagged": 2,
+     "rate": 0.1,
+     "rate_ci": [
+      0.0279,
+      0.301
+     ],
+     "kind": "benign"
+    },
+    "authored:evasion_adversarial": {
+     "n": 30,
+     "flagged": 5,
+     "rate": 0.1667,
+     "rate_ci": [
+      0.0734,
+      0.3356
+     ],
+     "kind": "attack"
+    },
+    "authored:heldout_adversarial": {
+     "n": 40,
+     "flagged": 12,
+     "rate": 0.3,
+     "rate_ci": [
+      0.1807,
+      0.4543
+     ],
+     "kind": "attack"
+    },
+    "authored:legitimate_updates": {
+     "n": 9,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.2991
+     ],
+     "kind": "benign"
+    },
+    "deepset": {
+     "n": 68,
+     "flagged": 18,
+     "rate": 0.2647,
+     "rate_ci": [
+      0.1745,
+      0.3801
+     ],
+     "kind": "attack"
+    },
+    "gandalf": {
+     "n": 57,
+     "flagged": 2,
+     "rate": 0.0351,
+     "rate_ci": [
+      0.0097,
+      0.1192
+     ],
+     "kind": "attack"
+    },
+    "injecagent": {
+     "n": 26,
+     "flagged": 5,
+     "rate": 0.1923,
+     "rate_ci": [
+      0.0851,
+      0.3788
+     ],
+     "kind": "attack"
+    },
+    "oasst1": {
+     "n": 82,
+     "flagged": 9,
+     "rate": 0.1098,
+     "rate_ci": [
+      0.0588,
+      0.1956
+     ],
+     "kind": "benign"
+    },
+    "personachat": {
+     "n": 170,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0221
+     ],
+     "kind": "benign"
+    },
+    "poisonedrag": {
+     "n": 74,
+     "flagged": 28,
+     "rate": 0.3784,
+     "rate_ci": [
+      0.2765,
+      0.4923
+     ],
+     "kind": "attack"
+    },
+    "safeguard": {
+     "n": 111,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0335
+     ],
+     "kind": "attack"
+    }
+   },
+   "note": "threshold at the 95th percentile of held-out benign scores"
+  },
+  "isolation forest, synthetic baseline (original)": {
+   "n": 710,
+   "n_attack": 406,
+   "n_benign": 304,
+   "tp": 30,
+   "fp": 22,
+   "tn": 282,
+   "fn": 376,
+   "precision": 0.5769,
+   "recall": 0.0739,
+   "fpr": 0.0724,
+   "f1": 0.131,
+   "recall_ci": [
+    0.0522,
+    0.1035
+   ],
+   "fpr_ci": [
+    0.0483,
+    0.1071
+   ],
+   "precision_ci": [
+    0.4419,
+    0.7013
+   ],
+   "f1_ci": [
+    0.0881,
+    0.172
+   ],
+   "auc": 0.531,
+   "auc_ci": [
+    0.493,
+    0.5732
+   ],
+   "per_source": {
+    "authored:benign_personachat": {
+     "n": 23,
+     "flagged": 1,
+     "rate": 0.0435,
+     "rate_ci": [
+      0.0077,
+      0.2099
+     ],
+     "kind": "benign"
+    },
+    "authored:benign_technical": {
+     "n": 20,
+     "flagged": 1,
+     "rate": 0.05,
+     "rate_ci": [
+      0.0089,
+      0.2361
+     ],
+     "kind": "benign"
+    },
+    "authored:evasion_adversarial": {
+     "n": 30,
+     "flagged": 1,
+     "rate": 0.0333,
+     "rate_ci": [
+      0.0059,
+      0.1667
+     ],
+     "kind": "attack"
+    },
+    "authored:heldout_adversarial": {
+     "n": 40,
+     "flagged": 1,
+     "rate": 0.025,
+     "rate_ci": [
+      0.0044,
+      0.1288
+     ],
+     "kind": "attack"
+    },
+    "authored:legitimate_updates": {
+     "n": 9,
+     "flagged": 2,
+     "rate": 0.2222,
+     "rate_ci": [
+      0.0632,
+      0.5474
+     ],
+     "kind": "benign"
+    },
+    "deepset": {
+     "n": 68,
+     "flagged": 8,
+     "rate": 0.1176,
+     "rate_ci": [
+      0.0608,
+      0.2153
+     ],
+     "kind": "attack"
+    },
+    "gandalf": {
+     "n": 57,
+     "flagged": 5,
+     "rate": 0.0877,
+     "rate_ci": [
+      0.0381,
+      0.1894
+     ],
+     "kind": "attack"
+    },
+    "injecagent": {
+     "n": 26,
+     "flagged": 1,
+     "rate": 0.0385,
+     "rate_ci": [
+      0.0068,
+      0.1889
+     ],
+     "kind": "attack"
+    },
+    "oasst1": {
+     "n": 82,
+     "flagged": 6,
+     "rate": 0.0732,
+     "rate_ci": [
+      0.034,
+      0.1506
+     ],
+     "kind": "benign"
+    },
+    "personachat": {
+     "n": 170,
+     "flagged": 12,
+     "rate": 0.0706,
+     "rate_ci": [
+      0.0408,
+      0.1193
+     ],
+     "kind": "benign"
+    },
+    "poisonedrag": {
+     "n": 74,
+     "flagged": 1,
+     "rate": 0.0135,
+     "rate_ci": [
+      0.0024,
+      0.0727
+     ],
+     "kind": "attack"
+    },
+    "safeguard": {
+     "n": 111,
+     "flagged": 13,
+     "rate": 0.1171,
+     "rate_ci": [
+      0.0697,
+      0.1901
+     ],
+     "kind": "attack"
+    }
+   },
+   "note": "threshold at the 95th percentile of held-out benign scores"
+  },
+  "isolation forest, benign profile": {
+   "n": 710,
+   "n_attack": 406,
+   "n_benign": 304,
+   "tp": 32,
+   "fp": 17,
+   "tn": 287,
+   "fn": 374,
+   "precision": 0.6531,
+   "recall": 0.0788,
+   "fpr": 0.0559,
+   "f1": 0.1407,
+   "recall_ci": [
+    0.0564,
+    0.1091
+   ],
+   "fpr_ci": [
+    0.0352,
+    0.0877
+   ],
+   "precision_ci": [
+    0.5131,
+    0.7708
+   ],
+   "f1_ci": [
+    0.0949,
+    0.185
+   ],
+   "auc": 0.6563,
+   "auc_ci": [
+    0.6208,
+    0.696
+   ],
+   "per_source": {
+    "authored:benign_personachat": {
+     "n": 23,
+     "flagged": 1,
+     "rate": 0.0435,
+     "rate_ci": [
+      0.0077,
+      0.2099
+     ],
+     "kind": "benign"
+    },
+    "authored:benign_technical": {
+     "n": 20,
+     "flagged": 4,
+     "rate": 0.2,
+     "rate_ci": [
+      0.0807,
+      0.416
+     ],
+     "kind": "benign"
+    },
+    "authored:evasion_adversarial": {
+     "n": 30,
+     "flagged": 6,
+     "rate": 0.2,
+     "rate_ci": [
+      0.0951,
+      0.3731
+     ],
+     "kind": "attack"
+    },
+    "authored:heldout_adversarial": {
+     "n": 40,
+     "flagged": 7,
+     "rate": 0.175,
+     "rate_ci": [
+      0.0875,
+      0.3195
+     ],
+     "kind": "attack"
+    },
+    "authored:legitimate_updates": {
+     "n": 9,
+     "flagged": 1,
+     "rate": 0.1111,
+     "rate_ci": [
+      0.0199,
+      0.435
+     ],
+     "kind": "benign"
+    },
+    "deepset": {
+     "n": 68,
+     "flagged": 4,
+     "rate": 0.0588,
+     "rate_ci": [
+      0.0231,
+      0.1417
+     ],
+     "kind": "attack"
+    },
+    "gandalf": {
+     "n": 57,
+     "flagged": 1,
+     "rate": 0.0175,
+     "rate_ci": [
+      0.0031,
+      0.0929
+     ],
+     "kind": "attack"
+    },
+    "injecagent": {
+     "n": 26,
+     "flagged": 2,
+     "rate": 0.0769,
+     "rate_ci": [
+      0.0214,
+      0.2414
+     ],
+     "kind": "attack"
+    },
+    "oasst1": {
+     "n": 82,
+     "flagged": 10,
+     "rate": 0.122,
+     "rate_ci": [
+      0.0676,
+      0.2101
+     ],
+     "kind": "benign"
+    },
+    "personachat": {
+     "n": 170,
+     "flagged": 1,
+     "rate": 0.0059,
+     "rate_ci": [
+      0.001,
+      0.0326
+     ],
+     "kind": "benign"
+    },
+    "poisonedrag": {
+     "n": 74,
+     "flagged": 10,
+     "rate": 0.1351,
+     "rate_ci": [
+      0.0751,
+      0.2312
+     ],
+     "kind": "attack"
+    },
+    "safeguard": {
+     "n": 111,
+     "flagged": 2,
+     "rate": 0.018,
+     "rate_ci": [
+      0.005,
+      0.0633
+     ],
+     "kind": "attack"
+    }
+   },
+   "note": "threshold at the 95th percentile of held-out benign scores"
+  },
+  "k-nearest-neighbour distance": {
+   "n": 710,
+   "n_attack": 406,
+   "n_benign": 304,
+   "tp": 77,
+   "fp": 14,
+   "tn": 290,
+   "fn": 329,
+   "precision": 0.8462,
+   "recall": 0.1897,
+   "fpr": 0.0461,
+   "f1": 0.3099,
+   "recall_ci": [
+    0.1545,
+    0.2306
+   ],
+   "fpr_ci": [
+    0.0276,
+    0.0758
+   ],
+   "precision_ci": [
+    0.7582,
+    0.9061
+   ],
+   "f1_ci": [
+    0.26,
+    0.3614
+   ],
+   "auc": 0.855,
+   "auc_ci": [
+    0.8244,
+    0.8844
+   ],
+   "per_source": {
+    "authored:benign_personachat": {
+     "n": 23,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.1431
+     ],
+     "kind": "benign"
+    },
+    "authored:benign_technical": {
+     "n": 20,
+     "flagged": 2,
+     "rate": 0.1,
+     "rate_ci": [
+      0.0279,
+      0.301
+     ],
+     "kind": "benign"
+    },
+    "authored:evasion_adversarial": {
+     "n": 30,
+     "flagged": 8,
+     "rate": 0.2667,
+     "rate_ci": [
+      0.1418,
+      0.4445
+     ],
+     "kind": "attack"
+    },
+    "authored:heldout_adversarial": {
+     "n": 40,
+     "flagged": 13,
+     "rate": 0.325,
+     "rate_ci": [
+      0.2008,
+      0.4798
+     ],
+     "kind": "attack"
+    },
+    "authored:legitimate_updates": {
+     "n": 9,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.2991
+     ],
+     "kind": "benign"
+    },
+    "deepset": {
+     "n": 68,
+     "flagged": 13,
+     "rate": 0.1912,
+     "rate_ci": [
+      0.1153,
+      0.3001
+     ],
+     "kind": "attack"
+    },
+    "gandalf": {
+     "n": 57,
+     "flagged": 4,
+     "rate": 0.0702,
+     "rate_ci": [
+      0.0276,
+      0.167
+     ],
+     "kind": "attack"
+    },
+    "injecagent": {
+     "n": 26,
+     "flagged": 2,
+     "rate": 0.0769,
+     "rate_ci": [
+      0.0214,
+      0.2414
+     ],
+     "kind": "attack"
+    },
+    "oasst1": {
+     "n": 82,
+     "flagged": 12,
+     "rate": 0.1463,
+     "rate_ci": [
+      0.0857,
+      0.2386
+     ],
+     "kind": "benign"
+    },
+    "personachat": {
+     "n": 170,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0221
+     ],
+     "kind": "benign"
+    },
+    "poisonedrag": {
+     "n": 74,
+     "flagged": 37,
+     "rate": 0.5,
+     "rate_ci": [
+      0.3889,
+      0.6111
+     ],
+     "kind": "attack"
+    },
+    "safeguard": {
+     "n": 111,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0335
+     ],
+     "kind": "attack"
+    }
+   },
+   "note": "threshold at the 95th percentile of held-out benign scores"
+  },
+  "local outlier factor": {
+   "n": 710,
+   "n_attack": 406,
+   "n_benign": 304,
+   "tp": 65,
+   "fp": 10,
+   "tn": 294,
+   "fn": 341,
+   "precision": 0.8667,
+   "recall": 0.1601,
+   "fpr": 0.0329,
+   "f1": 0.2703,
+   "recall_ci": [
+    0.1276,
+    0.1989
+   ],
+   "fpr_ci": [
+    0.018,
+    0.0595
+   ],
+   "precision_ci": [
+    0.7717,
+    0.9259
+   ],
+   "f1_ci": [
+    0.2237,
+    0.3189
+   ],
+   "auc": 0.7612,
+   "auc_ci": [
+    0.7279,
+    0.7961
+   ],
+   "per_source": {
+    "authored:benign_personachat": {
+     "n": 23,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.1431
+     ],
+     "kind": "benign"
+    },
+    "authored:benign_technical": {
+     "n": 20,
+     "flagged": 1,
+     "rate": 0.05,
+     "rate_ci": [
+      0.0089,
+      0.2361
+     ],
+     "kind": "benign"
+    },
+    "authored:evasion_adversarial": {
+     "n": 30,
+     "flagged": 2,
+     "rate": 0.0667,
+     "rate_ci": [
+      0.0185,
+      0.2132
+     ],
+     "kind": "attack"
+    },
+    "authored:heldout_adversarial": {
+     "n": 40,
+     "flagged": 5,
+     "rate": 0.125,
+     "rate_ci": [
+      0.0546,
+      0.2611
+     ],
+     "kind": "attack"
+    },
+    "authored:legitimate_updates": {
+     "n": 9,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.2991
+     ],
+     "kind": "benign"
+    },
+    "deepset": {
+     "n": 68,
+     "flagged": 13,
+     "rate": 0.1912,
+     "rate_ci": [
+      0.1153,
+      0.3001
+     ],
+     "kind": "attack"
+    },
+    "gandalf": {
+     "n": 57,
+     "flagged": 1,
+     "rate": 0.0175,
+     "rate_ci": [
+      0.0031,
+      0.0929
+     ],
+     "kind": "attack"
+    },
+    "injecagent": {
+     "n": 26,
+     "flagged": 1,
+     "rate": 0.0385,
+     "rate_ci": [
+      0.0068,
+      0.1889
+     ],
+     "kind": "attack"
+    },
+    "oasst1": {
+     "n": 82,
+     "flagged": 9,
+     "rate": 0.1098,
+     "rate_ci": [
+      0.0588,
+      0.1956
+     ],
+     "kind": "benign"
+    },
+    "personachat": {
+     "n": 170,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0221
+     ],
+     "kind": "benign"
+    },
+    "poisonedrag": {
+     "n": 74,
+     "flagged": 43,
+     "rate": 0.5811,
+     "rate_ci": [
+      0.4674,
+      0.6868
+     ],
+     "kind": "attack"
+    },
+    "safeguard": {
+     "n": 111,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0335
+     ],
+     "kind": "attack"
+    }
+   },
+   "note": "threshold at the 95th percentile of held-out benign scores"
+  },
+  "one-class SVM": {
+   "n": 710,
+   "n_attack": 406,
+   "n_benign": 304,
+   "tp": 81,
+   "fp": 10,
+   "tn": 294,
+   "fn": 325,
+   "precision": 0.8901,
+   "recall": 0.1995,
+   "fpr": 0.0329,
+   "f1": 0.326,
+   "recall_ci": [
+    0.1635,
+    0.2411
+   ],
+   "fpr_ci": [
+    0.018,
+    0.0595
+   ],
+   "precision_ci": [
+    0.8094,
+    0.9392
+   ],
+   "f1_ci": [
+    0.2746,
+    0.378
+   ],
+   "auc": 0.7313,
+   "auc_ci": [
+    0.6967,
+    0.7734
+   ],
+   "per_source": {
+    "authored:benign_personachat": {
+     "n": 23,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.1431
+     ],
+     "kind": "benign"
+    },
+    "authored:benign_technical": {
+     "n": 20,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.1611
+     ],
+     "kind": "benign"
+    },
+    "authored:evasion_adversarial": {
+     "n": 30,
+     "flagged": 14,
+     "rate": 0.4667,
+     "rate_ci": [
+      0.3023,
+      0.6386
+     ],
+     "kind": "attack"
+    },
+    "authored:heldout_adversarial": {
+     "n": 40,
+     "flagged": 15,
+     "rate": 0.375,
+     "rate_ci": [
+      0.2422,
+      0.5297
+     ],
+     "kind": "attack"
+    },
+    "authored:legitimate_updates": {
+     "n": 9,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.2991
+     ],
+     "kind": "benign"
+    },
+    "deepset": {
+     "n": 68,
+     "flagged": 8,
+     "rate": 0.1176,
+     "rate_ci": [
+      0.0608,
+      0.2153
+     ],
+     "kind": "attack"
+    },
+    "gandalf": {
+     "n": 57,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0631
+     ],
+     "kind": "attack"
+    },
+    "injecagent": {
+     "n": 26,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.1287
+     ],
+     "kind": "attack"
+    },
+    "oasst1": {
+     "n": 82,
+     "flagged": 10,
+     "rate": 0.122,
+     "rate_ci": [
+      0.0676,
+      0.2101
+     ],
+     "kind": "benign"
+    },
+    "personachat": {
+     "n": 170,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0221
+     ],
+     "kind": "benign"
+    },
+    "poisonedrag": {
+     "n": 74,
+     "flagged": 44,
+     "rate": 0.5946,
+     "rate_ci": [
+      0.4808,
+      0.6991
+     ],
+     "kind": "attack"
+    },
+    "safeguard": {
+     "n": 111,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0335
+     ],
+     "kind": "attack"
+    }
+   },
+   "note": "threshold at the 95th percentile of held-out benign scores"
+  },
+  "zero-shot NLI instruction detector": {
+   "n": 710,
+   "n_attack": 406,
+   "n_benign": 304,
+   "tp": 44,
+   "fp": 10,
+   "tn": 294,
+   "fn": 362,
+   "precision": 0.8148,
+   "recall": 0.1084,
+   "fpr": 0.0329,
+   "f1": 0.1913,
+   "recall_ci": [
+    0.0817,
+    0.1424
+   ],
+   "fpr_ci": [
+    0.018,
+    0.0595
+   ],
+   "precision_ci": [
+    0.6916,
+    0.8962
+   ],
+   "f1_ci": [
+    0.1413,
+    0.2406
+   ],
+   "auc": 0.5626,
+   "auc_ci": [
+    0.522,
+    0.6018
+   ],
+   "per_source": {
+    "authored:benign_personachat": {
+     "n": 23,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.1431
+     ],
+     "kind": "benign"
+    },
+    "authored:benign_technical": {
+     "n": 20,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.1611
+     ],
+     "kind": "benign"
+    },
+    "authored:evasion_adversarial": {
+     "n": 30,
+     "flagged": 1,
+     "rate": 0.0333,
+     "rate_ci": [
+      0.0059,
+      0.1667
+     ],
+     "kind": "attack"
+    },
+    "authored:heldout_adversarial": {
+     "n": 40,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0876
+     ],
+     "kind": "attack"
+    },
+    "authored:legitimate_updates": {
+     "n": 9,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.2991
+     ],
+     "kind": "benign"
+    },
+    "deepset": {
+     "n": 68,
+     "flagged": 6,
+     "rate": 0.0882,
+     "rate_ci": [
+      0.0411,
+      0.1794
+     ],
+     "kind": "attack"
+    },
+    "gandalf": {
+     "n": 57,
+     "flagged": 1,
+     "rate": 0.0175,
+     "rate_ci": [
+      0.0031,
+      0.0929
+     ],
+     "kind": "attack"
+    },
+    "injecagent": {
+     "n": 26,
+     "flagged": 8,
+     "rate": 0.3077,
+     "rate_ci": [
+      0.165,
+      0.4999
+     ],
+     "kind": "attack"
+    },
+    "oasst1": {
+     "n": 82,
+     "flagged": 10,
+     "rate": 0.122,
+     "rate_ci": [
+      0.0676,
+      0.2101
+     ],
+     "kind": "benign"
+    },
+    "personachat": {
+     "n": 170,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0221
+     ],
+     "kind": "benign"
+    },
+    "poisonedrag": {
+     "n": 74,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0493
+     ],
+     "kind": "attack"
+    },
+    "safeguard": {
+     "n": 111,
+     "flagged": 28,
+     "rate": 0.2523,
+     "rate_ci": [
+      0.1807,
+      0.3404
+     ],
+     "kind": "attack"
+    }
+   },
+   "note": "no training; hypothesis: the text instructs an assistant"
+  },
+  "classifier only (logistic regression)": {
+   "n": 710,
+   "n_attack": 406,
+   "n_benign": 304,
+   "tp": 316,
+   "fp": 27,
+   "tn": 277,
+   "fn": 90,
+   "precision": 0.9213,
+   "recall": 0.7783,
+   "fpr": 0.0888,
+   "f1": 0.8438,
+   "recall_ci": [
+    0.7354,
+    0.816
+   ],
+   "fpr_ci": [
+    0.0618,
+    0.1261
+   ],
+   "precision_ci": [
+    0.8879,
+    0.9453
+   ],
+   "f1_ci": [
+    0.8162,
+    0.8705
+   ],
+   "auc": 0.9293,
+   "auc_ci": [
+    0.9121,
+    0.946
+   ],
+   "per_source": {
+    "authored:benign_personachat": {
+     "n": 23,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.1431
+     ],
+     "kind": "benign"
+    },
+    "authored:benign_technical": {
+     "n": 20,
+     "flagged": 3,
+     "rate": 0.15,
+     "rate_ci": [
+      0.0524,
+      0.3604
+     ],
+     "kind": "benign"
+    },
+    "authored:evasion_adversarial": {
+     "n": 30,
+     "flagged": 26,
+     "rate": 0.8667,
+     "rate_ci": [
+      0.7032,
+      0.9469
+     ],
+     "kind": "attack"
+    },
+    "authored:heldout_adversarial": {
+     "n": 40,
+     "flagged": 37,
+     "rate": 0.925,
+     "rate_ci": [
+      0.8014,
+      0.9742
+     ],
+     "kind": "attack"
+    },
+    "authored:legitimate_updates": {
+     "n": 9,
+     "flagged": 3,
+     "rate": 0.3333,
+     "rate_ci": [
+      0.1206,
+      0.6458
+     ],
+     "kind": "benign"
+    },
+    "deepset": {
+     "n": 68,
+     "flagged": 56,
+     "rate": 0.8235,
+     "rate_ci": [
+      0.7164,
+      0.8961
+     ],
+     "kind": "attack"
+    },
+    "gandalf": {
+     "n": 57,
+     "flagged": 55,
+     "rate": 0.9649,
+     "rate_ci": [
+      0.8808,
+      0.9903
+     ],
+     "kind": "attack"
+    },
+    "injecagent": {
+     "n": 26,
+     "flagged": 25,
+     "rate": 0.9615,
+     "rate_ci": [
+      0.8111,
+      0.9932
+     ],
+     "kind": "attack"
+    },
+    "oasst1": {
+     "n": 82,
+     "flagged": 20,
+     "rate": 0.2439,
+     "rate_ci": [
+      0.1638,
+      0.3469
+     ],
+     "kind": "benign"
+    },
+    "personachat": {
+     "n": 170,
+     "flagged": 1,
+     "rate": 0.0059,
+     "rate_ci": [
+      0.001,
+      0.0326
+     ],
+     "kind": "benign"
+    },
+    "poisonedrag": {
+     "n": 74,
+     "flagged": 6,
+     "rate": 0.0811,
+     "rate_ci": [
+      0.0377,
+      0.1658
+     ],
+     "kind": "attack"
+    },
+    "safeguard": {
+     "n": 111,
+     "flagged": 111,
+     "rate": 1.0,
+     "rate_ci": [
+      0.9665,
+      1.0
+     ],
+     "kind": "attack"
+    }
+   },
+   "note": "trained on the train split, probability above 0.5"
+  },
+  "classifier only (fine-tuned)": {
+   "n": 710,
+   "n_attack": 406,
+   "n_benign": 304,
+   "tp": 306,
+   "fp": 7,
+   "tn": 297,
+   "fn": 100,
+   "precision": 0.9776,
+   "recall": 0.7537,
+   "fpr": 0.023,
+   "f1": 0.8512,
+   "recall_ci": [
+    0.7095,
+    0.7931
+   ],
+   "fpr_ci": [
+    0.0112,
+    0.0468
+   ],
+   "precision_ci": [
+    0.9546,
+    0.9891
+   ],
+   "f1_ci": [
+    0.824,
+    0.8771
+   ],
+   "auc": 0.9075,
+   "auc_ci": [
+    0.8854,
+    0.9272
+   ],
+   "per_source": {
+    "authored:benign_personachat": {
+     "n": 23,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.1431
+     ],
+     "kind": "benign"
+    },
+    "authored:benign_technical": {
+     "n": 20,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.1611
+     ],
+     "kind": "benign"
+    },
+    "authored:evasion_adversarial": {
+     "n": 30,
+     "flagged": 19,
+     "rate": 0.6333,
+     "rate_ci": [
+      0.4551,
+      0.7813
+     ],
+     "kind": "attack"
+    },
+    "authored:heldout_adversarial": {
+     "n": 40,
+     "flagged": 34,
+     "rate": 0.85,
+     "rate_ci": [
+      0.7093,
+      0.9294
+     ],
+     "kind": "attack"
+    },
+    "authored:legitimate_updates": {
+     "n": 9,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.2991
+     ],
+     "kind": "benign"
+    },
+    "deepset": {
+     "n": 68,
+     "flagged": 64,
+     "rate": 0.9412,
+     "rate_ci": [
+      0.8583,
+      0.9769
+     ],
+     "kind": "attack"
+    },
+    "gandalf": {
+     "n": 57,
+     "flagged": 55,
+     "rate": 0.9649,
+     "rate_ci": [
+      0.8808,
+      0.9903
+     ],
+     "kind": "attack"
+    },
+    "injecagent": {
+     "n": 26,
+     "flagged": 24,
+     "rate": 0.9231,
+     "rate_ci": [
+      0.7586,
+      0.9786
+     ],
+     "kind": "attack"
+    },
+    "oasst1": {
+     "n": 82,
+     "flagged": 6,
+     "rate": 0.0732,
+     "rate_ci": [
+      0.034,
+      0.1506
+     ],
+     "kind": "benign"
+    },
+    "personachat": {
+     "n": 170,
+     "flagged": 1,
+     "rate": 0.0059,
+     "rate_ci": [
+      0.001,
+      0.0326
+     ],
+     "kind": "benign"
+    },
+    "poisonedrag": {
+     "n": 74,
+     "flagged": 1,
+     "rate": 0.0135,
+     "rate_ci": [
+      0.0024,
+      0.0727
+     ],
+     "kind": "attack"
+    },
+    "safeguard": {
+     "n": 111,
+     "flagged": 109,
+     "rate": 0.982,
+     "rate_ci": [
+      0.9367,
+      0.995
+     ],
+     "kind": "attack"
+    }
+   },
+   "note": "trained on the train split, probability above 0.5"
+  }
+ },
+ "atlas": {
+  "original": {
+   "n": 710,
+   "n_attack": 406,
+   "n_benign": 304,
+   "tp": 66,
+   "fp": 1,
+   "tn": 303,
+   "fn": 340,
+   "precision": 0.9851,
+   "recall": 0.1626,
+   "fpr": 0.0033,
+   "f1": 0.2791,
+   "recall_ci": [
+    0.1299,
+    0.2016
+   ],
+   "fpr_ci": [
+    0.0006,
+    0.0184
+   ],
+   "precision_ci": [
+    0.9202,
+    0.9974
+   ],
+   "f1_ci": [
+    0.2271,
+    0.3276
+   ],
+   "auc": 0.4358,
+   "auc_ci": [
+    0.3928,
+    0.472
+   ],
+   "per_source": {
+    "authored:benign_personachat": {
+     "n": 23,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.1431
+     ],
+     "kind": "benign"
+    },
+    "authored:benign_technical": {
+     "n": 20,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.1611
+     ],
+     "kind": "benign"
+    },
+    "authored:evasion_adversarial": {
+     "n": 30,
+     "flagged": 2,
+     "rate": 0.0667,
+     "rate_ci": [
+      0.0185,
+      0.2132
+     ],
+     "kind": "attack"
+    },
+    "authored:heldout_adversarial": {
+     "n": 40,
+     "flagged": 33,
+     "rate": 0.825,
+     "rate_ci": [
+      0.6805,
+      0.9125
+     ],
+     "kind": "attack"
+    },
+    "authored:legitimate_updates": {
+     "n": 9,
+     "flagged": 1,
+     "rate": 0.1111,
+     "rate_ci": [
+      0.0199,
+      0.435
+     ],
+     "kind": "benign"
+    },
+    "deepset": {
+     "n": 68,
+     "flagged": 2,
+     "rate": 0.0294,
+     "rate_ci": [
+      0.0081,
+      0.101
+     ],
+     "kind": "attack"
+    },
+    "gandalf": {
+     "n": 57,
+     "flagged": 11,
+     "rate": 0.193,
+     "rate_ci": [
+      0.1113,
+      0.3134
+     ],
+     "kind": "attack"
+    },
+    "injecagent": {
+     "n": 26,
+     "flagged": 7,
+     "rate": 0.2692,
+     "rate_ci": [
+      0.137,
+      0.4608
+     ],
+     "kind": "attack"
+    },
+    "oasst1": {
+     "n": 82,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0448
+     ],
+     "kind": "benign"
+    },
+    "personachat": {
+     "n": 170,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0221
+     ],
+     "kind": "benign"
+    },
+    "poisonedrag": {
+     "n": 74,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0493
+     ],
+     "kind": "attack"
+    },
+    "safeguard": {
+     "n": 111,
+     "flagged": 11,
+     "rate": 0.0991,
+     "rate_ci": [
+      0.0562,
+      0.1688
+     ],
+     "kind": "attack"
+    }
+   },
+   "vetoed_share": 0.0944,
+   "description": "The original prototype: hash embeddings, forest on 50 synthetic vectors, rule-based signals.",
+   "seconds_per_item": 0.2182
+  },
+  "semantic_embeddings": {
+   "n": 710,
+   "n_attack": 406,
+   "n_benign": 304,
+   "tp": 66,
+   "fp": 1,
+   "tn": 303,
+   "fn": 340,
+   "precision": 0.9851,
+   "recall": 0.1626,
+   "fpr": 0.0033,
+   "f1": 0.2791,
+   "recall_ci": [
+    0.1299,
+    0.2016
+   ],
+   "fpr_ci": [
+    0.0006,
+    0.0184
+   ],
+   "precision_ci": [
+    0.9202,
+    0.9974
+   ],
+   "f1_ci": [
+    0.2271,
+    0.3276
+   ],
+   "auc": 0.5599,
+   "auc_ci": [
+    0.5201,
+    0.602
+   ],
+   "per_source": {
+    "authored:benign_personachat": {
+     "n": 23,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.1431
+     ],
+     "kind": "benign"
+    },
+    "authored:benign_technical": {
+     "n": 20,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.1611
+     ],
+     "kind": "benign"
+    },
+    "authored:evasion_adversarial": {
+     "n": 30,
+     "flagged": 2,
+     "rate": 0.0667,
+     "rate_ci": [
+      0.0185,
+      0.2132
+     ],
+     "kind": "attack"
+    },
+    "authored:heldout_adversarial": {
+     "n": 40,
+     "flagged": 33,
+     "rate": 0.825,
+     "rate_ci": [
+      0.6805,
+      0.9125
+     ],
+     "kind": "attack"
+    },
+    "authored:legitimate_updates": {
+     "n": 9,
+     "flagged": 1,
+     "rate": 0.1111,
+     "rate_ci": [
+      0.0199,
+      0.435
+     ],
+     "kind": "benign"
+    },
+    "deepset": {
+     "n": 68,
+     "flagged": 2,
+     "rate": 0.0294,
+     "rate_ci": [
+      0.0081,
+      0.101
+     ],
+     "kind": "attack"
+    },
+    "gandalf": {
+     "n": 57,
+     "flagged": 11,
+     "rate": 0.193,
+     "rate_ci": [
+      0.1113,
+      0.3134
+     ],
+     "kind": "attack"
+    },
+    "injecagent": {
+     "n": 26,
+     "flagged": 7,
+     "rate": 0.2692,
+     "rate_ci": [
+      0.137,
+      0.4608
+     ],
+     "kind": "attack"
+    },
+    "oasst1": {
+     "n": 82,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0448
+     ],
+     "kind": "benign"
+    },
+    "personachat": {
+     "n": 170,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0221
+     ],
+     "kind": "benign"
+    },
+    "poisonedrag": {
+     "n": 74,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0493
+     ],
+     "kind": "attack"
+    },
+    "safeguard": {
+     "n": 111,
+     "flagged": 11,
+     "rate": 0.0991,
+     "rate_ci": [
+      0.0562,
+      0.1688
+     ],
+     "kind": "attack"
+    }
+   },
+   "vetoed_share": 0.0944,
+   "description": "Original rules and forest, but on sentence-transformer embeddings.",
+   "seconds_per_item": 0.7765
+  },
+  "profile_forest": {
+   "n": 710,
+   "n_attack": 406,
+   "n_benign": 304,
+   "tp": 66,
+   "fp": 1,
+   "tn": 303,
+   "fn": 340,
+   "precision": 0.9851,
+   "recall": 0.1626,
+   "fpr": 0.0033,
+   "f1": 0.2791,
+   "recall_ci": [
+    0.1299,
+    0.2016
+   ],
+   "fpr_ci": [
+    0.0006,
+    0.0184
+   ],
+   "precision_ci": [
+    0.9202,
+    0.9974
+   ],
+   "f1_ci": [
+    0.2271,
+    0.3276
+   ],
+   "auc": 0.6208,
+   "auc_ci": [
+    0.5785,
+    0.6629
+   ],
+   "per_source": {
+    "authored:benign_personachat": {
+     "n": 23,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.1431
+     ],
+     "kind": "benign"
+    },
+    "authored:benign_technical": {
+     "n": 20,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.1611
+     ],
+     "kind": "benign"
+    },
+    "authored:evasion_adversarial": {
+     "n": 30,
+     "flagged": 2,
+     "rate": 0.0667,
+     "rate_ci": [
+      0.0185,
+      0.2132
+     ],
+     "kind": "attack"
+    },
+    "authored:heldout_adversarial": {
+     "n": 40,
+     "flagged": 33,
+     "rate": 0.825,
+     "rate_ci": [
+      0.6805,
+      0.9125
+     ],
+     "kind": "attack"
+    },
+    "authored:legitimate_updates": {
+     "n": 9,
+     "flagged": 1,
+     "rate": 0.1111,
+     "rate_ci": [
+      0.0199,
+      0.435
+     ],
+     "kind": "benign"
+    },
+    "deepset": {
+     "n": 68,
+     "flagged": 2,
+     "rate": 0.0294,
+     "rate_ci": [
+      0.0081,
+      0.101
+     ],
+     "kind": "attack"
+    },
+    "gandalf": {
+     "n": 57,
+     "flagged": 11,
+     "rate": 0.193,
+     "rate_ci": [
+      0.1113,
+      0.3134
+     ],
+     "kind": "attack"
+    },
+    "injecagent": {
+     "n": 26,
+     "flagged": 7,
+     "rate": 0.2692,
+     "rate_ci": [
+      0.137,
+      0.4608
+     ],
+     "kind": "attack"
+    },
+    "oasst1": {
+     "n": 82,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0448
+     ],
+     "kind": "benign"
+    },
+    "personachat": {
+     "n": 170,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0221
+     ],
+     "kind": "benign"
+    },
+    "poisonedrag": {
+     "n": 74,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0493
+     ],
+     "kind": "attack"
+    },
+    "safeguard": {
+     "n": 111,
+     "flagged": 11,
+     "rate": 0.0991,
+     "rate_ci": [
+      0.0562,
+      0.1688
+     ],
+     "kind": "attack"
+    }
+   },
+   "vetoed_share": 0.0944,
+   "description": "Forest fitted on real benign embeddings.",
+   "seconds_per_item": 0.7376
+  },
+  "profile_knn": {
+   "n": 710,
+   "n_attack": 406,
+   "n_benign": 304,
+   "tp": 82,
+   "fp": 6,
+   "tn": 298,
+   "fn": 324,
+   "precision": 0.9318,
+   "recall": 0.202,
+   "fpr": 0.0197,
+   "f1": 0.332,
+   "recall_ci": [
+    0.1658,
+    0.2437
+   ],
+   "fpr_ci": [
+    0.0091,
+    0.0424
+   ],
+   "precision_ci": [
+    0.8591,
+    0.9684
+   ],
+   "f1_ci": [
+    0.2786,
+    0.3838
+   ],
+   "auc": 0.8576,
+   "auc_ci": [
+    0.83,
+    0.8872
+   ],
+   "per_source": {
+    "authored:benign_personachat": {
+     "n": 23,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.1431
+     ],
+     "kind": "benign"
+    },
+    "authored:benign_technical": {
+     "n": 20,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.1611
+     ],
+     "kind": "benign"
+    },
+    "authored:evasion_adversarial": {
+     "n": 30,
+     "flagged": 3,
+     "rate": 0.1,
+     "rate_ci": [
+      0.0346,
+      0.2562
+     ],
+     "kind": "attack"
+    },
+    "authored:heldout_adversarial": {
+     "n": 40,
+     "flagged": 35,
+     "rate": 0.875,
+     "rate_ci": [
+      0.7389,
+      0.9454
+     ],
+     "kind": "attack"
+    },
+    "authored:legitimate_updates": {
+     "n": 9,
+     "flagged": 1,
+     "rate": 0.1111,
+     "rate_ci": [
+      0.0199,
+      0.435
+     ],
+     "kind": "benign"
+    },
+    "deepset": {
+     "n": 68,
+     "flagged": 3,
+     "rate": 0.0441,
+     "rate_ci": [
+      0.0151,
+      0.1219
+     ],
+     "kind": "attack"
+    },
+    "gandalf": {
+     "n": 57,
+     "flagged": 11,
+     "rate": 0.193,
+     "rate_ci": [
+      0.1113,
+      0.3134
+     ],
+     "kind": "attack"
+    },
+    "injecagent": {
+     "n": 26,
+     "flagged": 7,
+     "rate": 0.2692,
+     "rate_ci": [
+      0.137,
+      0.4608
+     ],
+     "kind": "attack"
+    },
+    "oasst1": {
+     "n": 82,
+     "flagged": 5,
+     "rate": 0.061,
+     "rate_ci": [
+      0.0263,
+      0.1349
+     ],
+     "kind": "benign"
+    },
+    "personachat": {
+     "n": 170,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.0221
+     ],
+     "kind": "benign"
+    },
+    "poisonedrag": {
+     "n": 74,
+     "flagged": 12,
+     "rate": 0.1622,
+     "rate_ci": [
+      0.0953,
+      0.2624
+     ],
+     "kind": "attack"
+    },
+    "safeguard": {
+     "n": 111,
+     "flagged": 11,
+     "rate": 0.0991,
+     "rate_ci": [
+      0.0562,
+      0.1688
+     ],
+     "kind": "attack"
+    }
+   },
+   "vetoed_share": 0.1239,
+   "description": "k-nearest-neighbour anomaly detector on the benign profile.",
+   "seconds_per_item": 0.6423
+  },
+  "learned_behaviour": {
+   "n": 710,
+   "n_attack": 406,
+   "n_benign": 304,
+   "tp": 324,
+   "fp": 12,
+   "tn": 292,
+   "fn": 82,
+   "precision": 0.9643,
+   "recall": 0.798,
+   "fpr": 0.0395,
+   "f1": 0.8733,
+   "recall_ci": [
+    0.7563,
+    0.8342
+   ],
+   "fpr_ci": [
+    0.0227,
+    0.0677
+   ],
+   "precision_ci": [
+    0.9386,
+    0.9795
+   ],
+   "f1_ci": [
+    0.8453,
+    0.8973
+   ],
+   "auc": 0.9661,
+   "auc_ci": [
+    0.9519,
+    0.9775
+   ],
+   "per_source": {
+    "authored:benign_personachat": {
+     "n": 23,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.1431
+     ],
+     "kind": "benign"
+    },
+    "authored:benign_technical": {
+     "n": 20,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.1611
+     ],
+     "kind": "benign"
+    },
+    "authored:evasion_adversarial": {
+     "n": 30,
+     "flagged": 19,
+     "rate": 0.6333,
+     "rate_ci": [
+      0.4551,
+      0.7813
+     ],
+     "kind": "attack"
+    },
+    "authored:heldout_adversarial": {
+     "n": 40,
+     "flagged": 40,
+     "rate": 1.0,
+     "rate_ci": [
+      0.9124,
+      1.0
+     ],
+     "kind": "attack"
+    },
+    "authored:legitimate_updates": {
+     "n": 9,
+     "flagged": 1,
+     "rate": 0.1111,
+     "rate_ci": [
+      0.0199,
+      0.435
+     ],
+     "kind": "benign"
+    },
+    "deepset": {
+     "n": 68,
+     "flagged": 64,
+     "rate": 0.9412,
+     "rate_ci": [
+      0.8583,
+      0.9769
+     ],
+     "kind": "attack"
+    },
+    "gandalf": {
+     "n": 57,
+     "flagged": 55,
+     "rate": 0.9649,
+     "rate_ci": [
+      0.8808,
+      0.9903
+     ],
+     "kind": "attack"
+    },
+    "injecagent": {
+     "n": 26,
+     "flagged": 24,
+     "rate": 0.9231,
+     "rate_ci": [
+      0.7586,
+      0.9786
+     ],
+     "kind": "attack"
+    },
+    "oasst1": {
+     "n": 82,
+     "flagged": 10,
+     "rate": 0.122,
+     "rate_ci": [
+      0.0676,
+      0.2101
+     ],
+     "kind": "benign"
+    },
+    "personachat": {
+     "n": 170,
+     "flagged": 1,
+     "rate": 0.0059,
+     "rate_ci": [
+      0.001,
+      0.0326
+     ],
+     "kind": "benign"
+    },
+    "poisonedrag": {
+     "n": 74,
+     "flagged": 13,
+     "rate": 0.1757,
+     "rate_ci": [
+      0.1056,
+      0.2777
+     ],
+     "kind": "attack"
+    },
+    "safeguard": {
+     "n": 111,
+     "flagged": 109,
+     "rate": 0.982,
+     "rate_ci": [
+      0.9367,
+      0.995
+     ],
+     "kind": "attack"
+    }
+   },
+   "vetoed_share": 0.4732,
+   "description": "Adds the fine-tuned classifier to behavioural consistency (rules plus classifier).",
+   "seconds_per_item": 0.5323
+  },
+  "full": {
+   "n": 710,
+   "n_attack": 406,
+   "n_benign": 304,
+   "tp": 324,
+   "fp": 17,
+   "tn": 287,
+   "fn": 82,
+   "precision": 0.9501,
+   "recall": 0.798,
+   "fpr": 0.0559,
+   "f1": 0.8675,
+   "recall_ci": [
+    0.7563,
+    0.8342
+   ],
+   "fpr_ci": [
+    0.0352,
+    0.0877
+   ],
+   "precision_ci": [
+    0.9216,
+    0.9686
+   ],
+   "f1_ci": [
+    0.8403,
+    0.8906
+   ],
+   "auc": 0.963,
+   "auc_ci": [
+    0.9488,
+    0.9754
+   ],
+   "per_source": {
+    "authored:benign_personachat": {
+     "n": 23,
+     "flagged": 0,
+     "rate": 0.0,
+     "rate_ci": [
+      0.0,
+      0.1431
+     ],
+     "kind": "benign"
+    },
+    "authored:benign_technical": {
+     "n": 20,
+     "flagged": 3,
+     "rate": 0.15,
+     "rate_ci": [
+      0.0524,
+      0.3604
+     ],
+     "kind": "benign"
+    },
+    "authored:evasion_adversarial": {
+     "n": 30,
+     "flagged": 19,
+     "rate": 0.6333,
+     "rate_ci": [
+      0.4551,
+      0.7813
+     ],
+     "kind": "attack"
+    },
+    "authored:heldout_adversarial": {
+     "n": 40,
+     "flagged": 40,
+     "rate": 1.0,
+     "rate_ci": [
+      0.9124,
+      1.0
+     ],
+     "kind": "attack"
+    },
+    "authored:legitimate_updates": {
+     "n": 9,
+     "flagged": 1,
+     "rate": 0.1111,
+     "rate_ci": [
+      0.0199,
+      0.435
+     ],
+     "kind": "benign"
+    },
+    "deepset": {
+     "n": 68,
+     "flagged": 64,
+     "rate": 0.9412,
+     "rate_ci": [
+      0.8583,
+      0.9769
+     ],
+     "kind": "attack"
+    },
+    "gandalf": {
+     "n": 57,
+     "flagged": 55,
+     "rate": 0.9649,
+     "rate_ci": [
+      0.8808,
+      0.9903
+     ],
+     "kind": "attack"
+    },
+    "injecagent": {
+     "n": 26,
+     "flagged": 24,
+     "rate": 0.9231,
+     "rate_ci": [
+      0.7586,
+      0.9786
+     ],
+     "kind": "attack"
+    },
+    "oasst1": {
+     "n": 82,
+     "flagged": 11,
+     "rate": 0.1341,
+     "rate_ci": [
+      0.0766,
+      0.2245
+     ],
+     "kind": "benign"
+    },
+    "personachat": {
+     "n": 170,
+     "flagged": 2,
+     "rate": 0.0118,
+     "rate_ci": [
+      0.0032,
+      0.0419
+     ],
+     "kind": "benign"
+    },
+    "poisonedrag": {
+     "n": 74,
+     "flagged": 13,
+     "rate": 0.1757,
+     "rate_ci": [
+      0.1056,
+      0.2777
+     ],
+     "kind": "attack"
+    },
+    "safeguard": {
+     "n": 111,
+     "flagged": 109,
+     "rate": 0.982,
+     "rate_ci": [
+      0.9367,
+      0.995
+     ],
+     "kind": "attack"
+    }
+   },
+   "vetoed_share": 0.4803,
+   "description": "Adds semantic NLI to historical consistency (rules plus NLI).",
+   "seconds_per_item": 0.4588
+  }
+ }
+}

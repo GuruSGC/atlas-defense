@@ -22,6 +22,7 @@ from typing import List, Optional, Tuple
 import numpy as np
 from scipy.stats import norm, beta
 from sklearn.ensemble import IsolationForest
+from sklearn.neighbors import NearestNeighbors
 from core.settings import settings
 
 
@@ -57,7 +58,16 @@ class AnomalyDetector:
     MIN_ACCEPTED_FOR_REFIT = 8
     REFIT_EVERY = 5
 
-    def __init__(self, contamination: float = 0.10, dimension: int = 128, seed: int = 42):
+    KNN_K = 5
+    KNN_QUANTILE = 0.95
+
+    def __init__(self, contamination: float = 0.10, dimension: int = 128, seed: int = 42, kind: Optional[str] = None):
+        self.kind = kind or settings.ANOMALY_DETECTOR      # "iforest" or "knn"
+        if self.kind not in ("iforest", "knn"):
+            raise ValueError(f"unknown anomaly detector {self.kind!r}")
+        self._knn: Optional[NearestNeighbors] = None
+        self._knn_tau = 0.0
+        self._knn_scale = 1.0
         self.contamination = contamination
         self.dimension = dimension
         self.seed = seed
@@ -66,12 +76,20 @@ class AnomalyDetector:
         self.fit_count = 0
         self._accepted_at_last_fit = 0
         self._baseline: Optional[np.ndarray] = None
+        self._profile: Optional[np.ndarray] = None
         self._initialize_baseline_model()
 
     def _initialize_baseline_model(self) -> None:
         """
-        Fits an initial Isolation Forest on a synthetic baseline of unit-sphere vectors.
+        Fits the starting Isolation Forest. With a profile set (real benign embeddings) the forest
+        starts from that profile; otherwise it starts from a synthetic baseline of unit-sphere vectors.
         """
+        if self._profile is not None:
+            self._baseline = self._profile
+            self._fit_forest(self._baseline)
+            self.fit_count = 0
+            self._accepted_at_last_fit = 0
+            return
         rng = np.random.RandomState(self.seed)
         samples = rng.normal(loc=0.0, scale=0.3, size=(self.BASELINE_SIZE, self.dimension))
         norms = np.linalg.norm(samples, axis=1, keepdims=True)
@@ -81,6 +99,19 @@ class AnomalyDetector:
         self._accepted_at_last_fit = 0
 
     def _fit_forest(self, data: np.ndarray) -> None:
+        """Fit the base detector on `data`: an isolation forest, or a k-nearest-neighbour distance model."""
+        if self.kind == "knn":
+            data = data / np.maximum(np.linalg.norm(data, axis=1, keepdims=True), 1e-8)
+            k = min(self.KNN_K, len(data) - 1)
+            self._knn = NearestNeighbors(n_neighbors=k + 1, metric="cosine").fit(data)
+            dist, _ = self._knn.kneighbors(data)
+            loo = dist[:, 1:].mean(axis=1)                       # distance to the k nearest others
+            self._knn_tau = float(np.quantile(loo, self.KNN_QUANTILE))
+            self._knn_scale = float(max(np.std(loo), 1e-3))
+            self._knn_k = k
+            self.model = None
+            self._is_fitted = True
+            return
         self.model = IsolationForest(
             n_estimators=100,
             contamination=self.contamination,
@@ -89,10 +120,45 @@ class AnomalyDetector:
         self.model.fit(data)
         self._is_fitted = True
 
+    def _margins(self, batch: np.ndarray) -> np.ndarray:
+        """Signed margin per row: positive means inside the learned distribution."""
+        if self.kind == "knn":
+            batch = batch / np.maximum(np.linalg.norm(batch, axis=1, keepdims=True), 1e-8)
+            dist, _ = self._knn.kneighbors(batch, n_neighbors=self._knn_k)
+            return self._knn_tau - dist.mean(axis=1)
+        return self.model.decision_function(batch)
+
+    def _sigmoid_gain(self) -> float:
+        return 2.0 / self._knn_scale if self.kind == "knn" else 6.0
+
     def reset(self, seed: Optional[int] = None) -> None:
-        """Return to the synthetic baseline, optionally with a different random seed."""
+        """Return to the starting baseline (profile if one is set), optionally with a different random seed."""
         if seed is not None:
             self.seed = seed
+        self._initialize_baseline_model()
+
+    def set_dimension(self, dimension: int) -> None:
+        """Follow the embedding backend. Drops any profile of a different dimension."""
+        if dimension != self.dimension:
+            self.dimension = dimension
+            if self._profile is not None and self._profile.shape[1] != dimension:
+                self._profile = None
+            self._initialize_baseline_model()
+
+    def set_profile(self, embeddings: List[List[float]]) -> None:
+        """
+        Use real benign embeddings as the starting distribution instead of synthetic vectors.
+        The profile is what "normal" means for this user or deployment.
+        """
+        arr = np.array(embeddings, dtype=float)
+        if arr.ndim != 2 or len(arr) < 20:
+            raise ValueError("a profile needs at least 20 embeddings")
+        self.dimension = arr.shape[1]
+        self._profile = arr
+        self._initialize_baseline_model()
+
+    def clear_profile(self) -> None:
+        self._profile = None
         self._initialize_baseline_model()
 
     def fit(self, embeddings: List[List[float]]) -> None:
@@ -126,12 +192,12 @@ class AnomalyDetector:
         Computes anomaly score between 0.0 (extreme anomaly / outlier) and 1.0 (completely normal / inlier).
         Uses IsolationForest decision function with sigmoidal normalization.
         """
-        if not self._is_fitted or self.model is None or not embedding:
+        if not self._is_fitted or not embedding:
             return 0.5
 
         arr = np.array(embedding, dtype=float).reshape(1, -1)
-        raw_score = self.model.decision_function(arr)[0]
-        normalized_score = 1.0 / (1.0 + np.exp(-6.0 * raw_score))
+        raw_score = self._margins(arr)[0]
+        normalized_score = 1.0 / (1.0 + np.exp(-np.clip(self._sigmoid_gain() * raw_score, -50.0, 50.0)))
         return float(np.clip(normalized_score, 0.0, 1.0))
 
     def _noisy_votes(self, arr: np.ndarray, count: int, sigma: float, rng: np.random.Generator) -> int:
@@ -140,7 +206,7 @@ class AnomalyDetector:
         noisy = arr[None, :] + noise
         norms = np.linalg.norm(noisy, axis=1, keepdims=True)
         noisy = noisy / np.maximum(norms, 1e-8)
-        return int(np.sum(self.model.decision_function(noisy) > 0))
+        return int(np.sum(self._margins(noisy) > 0))
 
     def certify(
         self,
@@ -195,7 +261,7 @@ class AnomalyDetector:
             (TrustSignalsBreakdown.embedding_anomaly_certified_radius).
         """
         raw_score = self.compute_anomaly_score(embedding)
-        if not self._is_fitted or self.model is None or not embedding:
+        if not self._is_fitted or not embedding:
             return raw_score, 0.0
 
         cert = self.certify(embedding, n0=n0, n=n, sigma=sigma, alpha=alpha, seed=seed)

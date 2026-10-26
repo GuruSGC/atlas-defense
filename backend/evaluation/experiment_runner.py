@@ -19,6 +19,7 @@ memories, anomaly detector, or insertion history: all three are swapped out for 
 """
 
 import contextlib
+import copy
 import datetime
 import random
 from dataclasses import dataclass
@@ -66,6 +67,7 @@ class Decision:
     quarantined: bool
     trust: float
     vetoed: bool
+    signals: Optional[Dict[str, float]] = None
 
 
 @contextlib.contextmanager
@@ -85,8 +87,7 @@ def offline_mode(enabled: bool = True) -> Iterator[None]:
 def isolated_state(seed: int, engine: Optional[TrustEngine] = None) -> Iterator[InMemoryVectorStore]:
     """A fresh seeded store, a baseline anomaly detector, and an empty insertion history."""
     engine = engine or trust_engine
-    saved_detector = (anomaly_detector.model, anomaly_detector._is_fitted, anomaly_detector.fit_count,
-                      anomaly_detector._accepted_at_last_fit, anomaly_detector.seed, anomaly_detector._baseline)
+    saved_detector = copy.copy(anomaly_detector.__dict__)
     saved_events = list(engine.temporal._events)
     anomaly_detector.reset(seed)
     engine.temporal.reset()
@@ -95,10 +96,28 @@ def isolated_state(seed: int, engine: Optional[TrustEngine] = None) -> Iterator[
         with use_store(store):
             yield store
     finally:
-        (anomaly_detector.model, anomaly_detector._is_fitted, anomaly_detector.fit_count,
-         anomaly_detector._accepted_at_last_fit, anomaly_detector.seed, anomaly_detector._baseline) = saved_detector
+        anomaly_detector.__dict__.clear()
+        anomaly_detector.__dict__.update(saved_detector)
         engine.temporal._events.clear()
         engine.temporal._events.extend(saved_events)
+
+
+def _rules_only(fn):
+    """The 120-case benchmark and its report describe the rule-based prototype, so they run with the learned
+    classifier switched off even when one has been trained. (The classifier saw the authored development
+    set during training, so using it here would leak.)"""
+    import functools
+
+    @functools.wraps(fn)
+    def wrapper(*args, **kwargs):
+        from core.settings import settings
+        saved = settings.BEHAV_MODE
+        settings.BEHAV_MODE = "regex"
+        try:
+            return fn(*args, **kwargs)
+        finally:
+            settings.BEHAV_MODE = saved
+    return wrapper
 
 
 class ExperimentRunner:
@@ -139,7 +158,7 @@ class ExperimentRunner:
                 score, status, signals, _, _ = self.engine.evaluate_candidate(
                     cand, context_text=item.context, now=i * SPACING, record_event=True)
                 vetoed = bool(scoring_engine.evaluate_veto(signals)[1])
-                out.append(Decision(item, status == MemoryStatus.QUARANTINED, score, vetoed))
+                out.append(Decision(item, status == MemoryStatus.QUARANTINED, score, vetoed, signals.model_dump()))
         return out
 
     def run_streaming(self, items: List[Item], seed: Optional[int] = None, live: bool = False) -> List[Decision]:
@@ -205,6 +224,7 @@ class ExperimentRunner:
             protocol=protocol, intervals=self._intervals(decisions),
         )
 
+    @_rules_only
     def run_benchmark(self, live: bool = False) -> EvaluationSummary:
         """The 120-item primary benchmark under the leakage-free static protocol."""
         self._cached_results = self._summary(self.run_static(primary_benchmark(self.seed), live=live), "pipeline_static")
@@ -305,6 +325,7 @@ class ExperimentRunner:
             self.engine.temporal.reset()
         return rows
 
+    @_rules_only
     def run_full_report(self, seeds: int = 10, live: bool = False) -> EvaluationReport:
         primary = primary_benchmark(self.seed)
         sets = load_sets()

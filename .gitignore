@@ -50,3 +50,8 @@ frontend/.env.local
 backend/data/
 *.db
 *.tsbuildinfo
+
+# Downloaded public data and trained models (rebuilt by the commands in backend/README.md)
+backend/evaluation/data/public/
+backend/evaluation/data/public_cache/
+backend/models/

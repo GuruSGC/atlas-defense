@@ -1,0 +1,137 @@
+{
+ "n_profile": 436,
+ "n_test_attack": 406,
+ "n_test_benign": 304,
+ "detectors": {
+  "isolation forest, synthetic baseline (original)": {
+   "auc": 0.531,
+   "tpr_at_1pct_fpr": 0.0099,
+   "tpr_at_5pct_fpr": 0.0542,
+   "per_source_auc": {
+    "authored:evasion_adversarial": 0.5065,
+    "authored:heldout_adversarial": 0.5438,
+    "deepset": 0.5685,
+    "gandalf": 0.5368,
+    "injecagent": 0.5331,
+    "poisonedrag": 0.4413,
+    "safeguard": 0.5665
+   },
+   "auc_ci": [
+    0.493,
+    0.5732
+   ]
+  },
+  "isolation forest, benign profile": {
+   "auc": 0.7081,
+   "tpr_at_1pct_fpr": 0.0222,
+   "tpr_at_5pct_fpr": 0.0764,
+   "per_source_auc": {
+    "authored:evasion_adversarial": 0.7688,
+    "authored:heldout_adversarial": 0.7845,
+    "deepset": 0.6928,
+    "gandalf": 0.7044,
+    "injecagent": 0.7263,
+    "poisonedrag": 0.7621,
+    "safeguard": 0.6351
+   },
+   "auc_ci": [
+    0.6734,
+    0.7494
+   ]
+  },
+  "k-nearest-neighbour distance (k=5)": {
+   "auc": 0.8699,
+   "tpr_at_1pct_fpr": 0.0345,
+   "tpr_at_5pct_fpr": 0.2882,
+   "per_source_auc": {
+    "authored:evasion_adversarial": 0.9146,
+    "authored:heldout_adversarial": 0.9025,
+    "deepset": 0.8873,
+    "gandalf": 0.8808,
+    "injecagent": 0.8917,
+    "poisonedrag": 0.9453,
+    "safeguard": 0.7743
+   },
+   "auc_ci": [
+    0.8428,
+    0.8995
+   ]
+  },
+  "local outlier factor (k=20)": {
+   "auc": 0.7667,
+   "tpr_at_1pct_fpr": 0.0813,
+   "tpr_at_5pct_fpr": 0.2808,
+   "per_source_auc": {
+    "authored:evasion_adversarial": 0.8183,
+    "authored:heldout_adversarial": 0.7868,
+    "deepset": 0.7998,
+    "gandalf": 0.6024,
+    "injecagent": 0.8128,
+    "poisonedrag": 0.9718,
+    "safeguard": 0.6623
+   },
+   "auc_ci": [
+    0.733,
+    0.7997
+   ]
+  },
+  "one-class SVM (RBF)": {
+   "auc": 0.737,
+   "tpr_at_1pct_fpr": 0.1305,
+   "tpr_at_5pct_fpr": 0.2931,
+   "per_source_auc": {
+    "authored:evasion_adversarial": 0.9362,
+    "authored:heldout_adversarial": 0.9178,
+    "deepset": 0.7648,
+    "gandalf": 0.5882,
+    "injecagent": 0.7112,
+    "poisonedrag": 0.9711,
+    "safeguard": 0.5275
+   },
+   "auc_ci": [
+    0.7011,
+    0.7772
+   ]
+  },
+  "cosine distance to profile centroid": {
+   "auc": 0.8299,
+   "tpr_at_1pct_fpr": 0.1379,
+   "tpr_at_5pct_fpr": 0.2365,
+   "per_source_auc": {
+    "authored:evasion_adversarial": 0.9504,
+    "authored:heldout_adversarial": 0.9466,
+    "deepset": 0.8053,
+    "gandalf": 0.7877,
+    "injecagent": 0.8154,
+    "poisonedrag": 0.9364,
+    "safeguard": 0.7243
+   },
+   "auc_ci": [
+    0.7973,
+    0.8647
+   ]
+  }
+ },
+ "profile_size": {
+  "25": {
+   "isolation forest, benign profile": 0.6341,
+   "k-nearest-neighbour distance (k=5)": 0.8266
+  },
+  "50": {
+   "isolation forest, benign profile": 0.7059,
+   "k-nearest-neighbour distance (k=5)": 0.8428
+  },
+  "100": {
+   "isolation forest, benign profile": 0.7063,
+   "k-nearest-neighbour distance (k=5)": 0.8468
+  },
+  "200": {
+   "isolation forest, benign profile": 0.7738,
+   "k-nearest-neighbour distance (k=5)": 0.8669
+  },
+  "436": {
+   "isolation forest, benign profile": 0.7005,
+   "k-nearest-neighbour distance (k=5)": 0.8699
+  }
+ }
+}

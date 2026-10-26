@@ -1,0 +1,576 @@
+{
+ "profile_contradictions": {
+  "n_cases": 259,
+  "n_train": 166,
+  "n_test": 93,
+  "modes": {
+   "keyword clusters and revision rules (original)": {
+    "recall": 0.0,
+    "fpr": 0.0,
+    "precision": null,
+    "f1": 0.0,
+    "auc": 0.5,
+    "recall_ci": [
+     0.0,
+     0.0397
+    ],
+    "fpr_ci": [
+     0.0,
+     0.0397
+    ]
+   },
+   "NLI cross-encoder (semantic retrieval)": {
+    "recall": 0.8925,
+    "fpr": 0.0323,
+    "precision": 0.9651,
+    "f1": 0.9274,
+    "auc": 0.9392,
+    "recall_ci": [
+     0.8133,
+     0.9405
+    ],
+    "fpr_ci": [
+     0.011,
+     0.0906
+    ]
+   },
+   "rules plus NLI": {
+    "recall": 0.8925,
+    "fpr": 0.0323,
+    "precision": 0.9651,
+    "f1": 0.9274,
+    "auc": 0.9392,
+    "recall_ci": [
+     0.8133,
+     0.9405
+    ],
+    "fpr_ci": [
+     0.011,
+     0.0906
+    ]
+   },
+   "NLI without similarity gate": {
+    "recall": 0.9677,
+    "fpr": 0.5591,
+    "precision": 0.6338,
+    "f1": 0.766,
+    "auc": 0.8967,
+    "recall_ci": [
+     0.9094,
+     0.989
+    ],
+    "fpr_ci": [
+     0.4579,
+     0.6557
+    ]
+   }
+  },
+  "grid": [
+   {
+    "model": "cross-encoder/nli-deberta-v3-xsmall",
+    "gate": 0.55,
+    "theta": 0.7,
+    "train": {
+     "recall": 1.0,
+     "fpr": 0.5904,
+     "precision": 0.6288,
+     "f1": 0.7721,
+     "auc": 0.9402,
+     "recall_ci": [
+      0.9774,
+      1.0
+     ],
+     "fpr_ci": [
+      0.5143,
+      0.6623
+     ]
+    }
+   },
+   {
+    "model": "cross-encoder/nli-deberta-v3-xsmall",
+    "gate": 0.55,
+    "theta": 0.9,
+    "train": {
+     "recall": 0.988,
+     "fpr": 0.512,
+     "precision": 0.6586,
+     "f1": 0.7904,
+     "auc": 0.9379,
+     "recall_ci": [
+      0.9571,
+      0.9967
+     ],
+     "fpr_ci": [
+      0.4366,
+      0.587
+     ]
+    }
+   },
+   {
+    "model": "cross-encoder/nli-deberta-v3-xsmall",
+    "gate": 0.55,
+    "theta": 0.99,
+    "train": {
+     "recall": 0.9458,
+     "fpr": 0.2711,
+     "precision": 0.7772,
+     "f1": 0.8533,
+     "auc": 0.9302,
+     "recall_ci": [
+      0.9002,
+      0.9712
+     ],
+     "fpr_ci": [
+      0.2092,
+      0.3433
+     ]
+    }
+   },
+   {
+    "model": "cross-encoder/nli-deberta-v3-xsmall",
+    "gate": 0.55,
+    "theta": 0.999,
+    "train": {
+     "recall": 0.6205,
+     "fpr": 0.0301,
+     "precision": 0.9537,
+     "f1": 0.7518,
+     "auc": 0.7995,
+     "recall_ci": [
+      0.5447,
+      0.6908
+     ],
+     "fpr_ci": [
+      0.0129,
+      0.0686
+     ]
+    }
+   },
+   {
+    "model": "cross-encoder/nli-deberta-v3-xsmall",
+    "gate": 0.62,
+    "theta": 0.7,
+    "train": {
+     "recall": 1.0,
+     "fpr": 0.3855,
+     "precision": 0.7217,
+     "f1": 0.8384,
+     "auc": 0.9586,
+     "recall_ci": [
+      0.9774,
+      1.0
+     ],
+     "fpr_ci": [
+      0.3149,
+      0.4614
+     ]
+    }
+   },
+   {
+    "model": "cross-encoder/nli-deberta-v3-xsmall",
+    "gate": 0.62,
+    "theta": 0.9,
+    "train": {
+     "recall": 0.988,
+     "fpr": 0.3434,
+     "precision": 0.7421,
+     "f1": 0.8475,
+     "auc": 0.955,
+     "recall_ci": [
+      0.9571,
+      0.9967
+     ],
+     "fpr_ci": [
+      0.2754,
+      0.4184
+     ]
+    }
+   },
+   {
+    "model": "cross-encoder/nli-deberta-v3-xsmall",
+    "gate": 0.62,
+    "theta": 0.99,
+    "train": {
+     "recall": 0.9458,
+     "fpr": 0.1687,
+     "precision": 0.8486,
+     "f1": 0.8946,
+     "auc": 0.9428,
+     "recall_ci": [
+      0.9002,
+      0.9712
+     ],
+     "fpr_ci": [
+      0.1194,
+      0.233
+     ]
+    }
+   },
+   {
+    "model": "cross-encoder/nli-deberta-v3-xsmall",
+    "gate": 0.62,
+    "theta": 0.999,
+    "train": {
+     "recall": 0.6084,
+     "fpr": 0.0181,
+     "precision": 0.9712,
+     "f1": 0.7481,
+     "auc": 0.7966,
+     "recall_ci": [
+      0.5325,
+      0.6794
+     ],
+     "fpr_ci": [
+      0.0062,
+      0.0518
+     ]
+    }
+   },
+   {
+    "model": "cross-encoder/nli-deberta-v3-xsmall",
+    "gate": 0.7,
+    "theta": 0.7,
+    "train": {
+     "recall": 0.9578,
+     "fpr": 0.0843,
+     "precision": 0.9191,
+     "f1": 0.9381,
+     "auc": 0.9659,
+     "recall_ci": [
+      0.9155,
+      0.9794
+     ],
+     "fpr_ci": [
+      0.0509,
+      0.1366
+     ]
+    }
+   },
+   {
+    "model": "cross-encoder/nli-deberta-v3-xsmall",
+    "gate": 0.7,
+    "theta": 0.9,
+    "train": {
+     "recall": 0.9458,
+     "fpr": 0.0783,
+     "precision": 0.9235,
+     "f1": 0.9345,
+     "auc": 0.9605,
+     "recall_ci": [
+      0.9002,
+      0.9712
+     ],
+     "fpr_ci": [
+      0.0463,
+      0.1294
+     ]
+    }
+   },
+   {
+    "model": "cross-encoder/nli-deberta-v3-xsmall",
+    "gate": 0.7,
+    "theta": 0.99,
+    "train": {
+     "recall": 0.9036,
+     "fpr": 0.0422,
+     "precision": 0.9554,
+     "f1": 0.9288,
+     "auc": 0.9423,
+     "recall_ci": [
+      0.8492,
+      0.9398
+     ],
+     "fpr_ci": [
+      0.0206,
+      0.0845
+     ]
+    }
+   },
+   {
+    "model": "cross-encoder/nli-deberta-v3-xsmall",
+    "gate": 0.7,
+    "theta": 0.999,
+    "train": {
+     "recall": 0.5964,
+     "fpr": 0.006,
+     "precision": 0.99,
+     "f1": 0.7444,
+     "auc": 0.7967,
+     "recall_ci": [
+      0.5204,
+      0.668
+     ],
+     "fpr_ci": [
+      0.0011,
+      0.0333
+     ]
+    }
+   },
+   {
+    "model": "cross-encoder/nli-deberta-v3-small",
+    "gate": 0.55,
+    "theta": 0.7,
+    "train": {
+     "recall": 0.994,
+     "fpr": 0.506,
+     "precision": 0.6627,
+     "f1": 0.7952,
+     "auc": 0.9362,
+     "recall_ci": [
+      0.9667,
+      0.9989
+     ],
+     "fpr_ci": [
+      0.4307,
+      0.5811
+     ]
+    }
+   },
+   {
+    "model": "cross-encoder/nli-deberta-v3-small",
+    "gate": 0.55,
+    "theta": 0.9,
+    "train": {
+     "recall": 0.988,
+     "fpr": 0.4518,
+     "precision": 0.6862,
+     "f1": 0.8099,
+     "auc": 0.9351,
+     "recall_ci": [
+      0.9571,
+      0.9967
+     ],
+     "fpr_ci": [
+      0.378,
+      0.5278
+     ]
+    }
+   },
+   {
+    "model": "cross-encoder/nli-deberta-v3-small",
+    "gate": 0.55,
+    "theta": 0.99,
+    "train": {
+     "recall": 0.9639,
+     "fpr": 0.3434,
+     "precision": 0.7373,
+     "f1": 0.8355,
+     "auc": 0.9291,
+     "recall_ci": [
+      0.9234,
+      0.9833
+     ],
+     "fpr_ci": [
+      0.2754,
+      0.4184
+     ]
+    }
+   },
+   {
+    "model": "cross-encoder/nli-deberta-v3-small",
+    "gate": 0.55,
+    "theta": 0.999,
+    "train": {
+     "recall": 0.8855,
+     "fpr": 0.1205,
+     "precision": 0.8802,
+     "f1": 0.8829,
+     "auc": 0.9051,
+     "recall_ci": [
+      0.8282,
+      0.9255
+     ],
+     "fpr_ci": [
+      0.0794,
+      0.1788
+     ]
+    }
+   },
+   {
+    "model": "cross-encoder/nli-deberta-v3-small",
+    "gate": 0.62,
+    "theta": 0.7,
+    "train": {
+     "recall": 0.9819,
+     "fpr": 0.3494,
+     "precision": 0.7376,
+     "f1": 0.8424,
+     "auc": 0.9497,
+     "recall_ci": [
+      0.9482,
+      0.9938
+     ],
+     "fpr_ci": [
+      0.281,
+      0.4246
+     ]
+    }
+   },
+   {
+    "model": "cross-encoder/nli-deberta-v3-small",
+    "gate": 0.62,
+    "theta": 0.9,
+    "train": {
+     "recall": 0.9819,
+     "fpr": 0.3072,
+     "precision": 0.7617,
+     "f1": 0.8579,
+     "auc": 0.9501,
+     "recall_ci": [
+      0.9482,
+      0.9938
+     ],
+     "fpr_ci": [
+      0.2421,
+      0.3811
+     ]
+    }
+   },
+   {
+    "model": "cross-encoder/nli-deberta-v3-small",
+    "gate": 0.62,
+    "theta": 0.99,
+    "train": {
+     "recall": 0.9518,
+     "fpr": 0.2349,
+     "precision": 0.802,
+     "f1": 0.8705,
+     "auc": 0.9405,
+     "recall_ci": [
+      0.9078,
+      0.9754
+     ],
+     "fpr_ci": [
+      0.1769,
+      0.305
+     ]
+    }
+   },
+   {
+    "model": "cross-encoder/nli-deberta-v3-small",
+    "gate": 0.62,
+    "theta": 0.999,
+    "train": {
+     "recall": 0.8855,
+     "fpr": 0.0843,
+     "precision": 0.913,
+     "f1": 0.8991,
+     "auc": 0.9169,
+     "recall_ci": [
+      0.8282,
+      0.9255
+     ],
+     "fpr_ci": [
+      0.0509,
+      0.1366
+     ]
+    }
+   },
+   {
+    "model": "cross-encoder/nli-deberta-v3-small",
+    "gate": 0.7,
+    "theta": 0.7,
+    "train": {
+     "recall": 0.9337,
+     "fpr": 0.0964,
+     "precision": 0.9064,
+     "f1": 0.9199,
+     "auc": 0.953,
+     "recall_ci": [
+      0.8853,
+      0.9626
+     ],
+     "fpr_ci": [
+      0.0602,
+      0.1508
+     ]
+    }
+   },
+   {
+    "model": "cross-encoder/nli-deberta-v3-small",
+    "gate": 0.7,
+    "theta": 0.9,
+    "train": {
+     "recall": 0.9337,
+     "fpr": 0.0904,
+     "precision": 0.9118,
+     "f1": 0.9226,
+     "auc": 0.9532,
+     "recall_ci": [
+      0.8853,
+      0.9626
+     ],
+     "fpr_ci": [
+      0.0555,
+      0.1437
+     ]
+    }
+   },
+   {
+    "model": "cross-encoder/nli-deberta-v3-small",
+    "gate": 0.7,
+    "theta": 0.99,
+    "train": {
+     "recall": 0.9157,
+     "fpr": 0.0843,
+     "precision": 0.9157,
+     "f1": 0.9157,
+     "auc": 0.9451,
+     "recall_ci": [
+      0.8634,
+      0.9491
+     ],
+     "fpr_ci": [
+      0.0509,
+      0.1366
+     ]
+    }
+   },
+   {
+    "model": "cross-encoder/nli-deberta-v3-small",
+    "gate": 0.7,
+    "theta": 0.999,
+    "train": {
+     "recall": 0.8554,
+     "fpr": 0.0241,
+     "precision": 0.9726,
+     "f1": 0.9103,
+     "auc": 0.919,
+     "recall_ci": [
+      0.7939,
+      0.9009
+     ],
+     "fpr_ci": [
+      0.0094,
+      0.0603
+     ]
+    }
+   }
+  ],
+  "selected": {
+   "model": "cross-encoder/nli-deberta-v3-xsmall",
+   "similarity_gate": 0.7,
+   "threshold": 0.7
+  }
+ },
+ "poisonedrag_with_prior_knowledge": {
+  "clusters": {
+   "attack_flagged": 0.015,
+   "restatement_flagged": 0.0,
+   "unrelated_flagged": 0.0,
+   "n_attack": 200
+  },
+  "nli": {
+   "attack_flagged": 0.36,
+   "restatement_flagged": 0.0,
+   "unrelated_flagged": 0.0,
+   "n_attack": 200
+  },
+  "hybrid": {
+   "attack_flagged": 0.37,
+   "restatement_flagged": 0.0,
+   "unrelated_flagged": 0.0,
+   "n_attack": 200
+  }
+ }
+}

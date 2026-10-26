@@ -14,11 +14,40 @@ import httpx
 from core.settings import settings
 
 
+LOCAL_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
+LOCAL_DIMENSION = 384
+
+
+class LocalSemanticEmbedder:
+    """
+    Small sentence-transformer that runs on the CPU with no API key. It is loaded lazily, so the
+    import cost is only paid when the local backend is selected, and it is the embedder used for
+    the learned components and the evaluation that reports semantic results.
+    """
+
+    def __init__(self, model_name: str = LOCAL_MODEL_NAME):
+        self.model_name = model_name
+        self._model = None
+
+    def _load(self):
+        if self._model is None:
+            from sentence_transformers import SentenceTransformer
+            self._model = SentenceTransformer(self.model_name)
+        return self._model
+
+    def encode(self, texts: List[str]) -> List[List[float]]:
+        if not texts:
+            return []
+        vecs = self._load().encode(list(texts), batch_size=64, normalize_embeddings=True, show_progress_bar=False)
+        return [v.astype(float).tolist() for v in vecs]
+
+
 class EmbeddingGenerator:
     """
     Embedding interface generating normalized vector representations.
     Uses Gemini API when configured; falls back to deterministic multi-feature
-    hash projection for offline research/testing.
+    hash projection for offline research/testing. The backend can also be pinned to "hash"
+    or to the local sentence-transformer ("local").
     """
 
     CANDIDATE_EMBEDDING_MODELS = [
@@ -29,8 +58,11 @@ class EmbeddingGenerator:
         "embedding-001",
     ]
 
-    def __init__(self, dimension: int = 128):
+    def __init__(self, dimension: int = 128, backend: str = "auto"):
+        self.hash_dimension = dimension
         self.dimension = dimension
+        self.backend = "auto"
+        self._local = LocalSemanticEmbedder()
         self.api_key = settings.GEMINI_API_KEY.strip()
         self.model = settings.GEMINI_EMBEDDING_MODEL.strip()
         self.is_real_mode = bool(self.api_key and not settings.MOCK_MODE_FORCED)
@@ -41,6 +73,13 @@ class EmbeddingGenerator:
             print(f"[ATLAS EmbeddingGenerator] [STATUS: REAL GEMINI EMBEDDINGS] Target model: {self.model}")
         else:
             print("[ATLAS EmbeddingGenerator] [STATUS: DETERMINISTIC MOCK FALLBACK] Using unit-sphere multi-feature hash embeddings.")
+
+    def set_backend(self, backend: str) -> None:
+        """auto: Gemini if a key is set, else hash. hash: deterministic hashing. local: MiniLM sentence-transformer."""
+        if backend not in ("auto", "hash", "local"):
+            raise ValueError(f"unknown embedding backend {backend!r}")
+        self.backend = backend
+        self.dimension = LOCAL_DIMENSION if backend == "local" else self.hash_dimension
 
     def _get_auth_config(self) -> Tuple[Dict[str, str], Dict[str, str]]:
         """
@@ -96,6 +135,11 @@ class EmbeddingGenerator:
         if not text or not text.strip():
             return [0.0] * self.dimension
 
+        if self.backend == "local":
+            return self._local.encode([text])[0]
+        if self.backend == "hash":
+            return self._deterministic_local_embedding(text)
+
         if self.is_real_mode:
             try:
                 return self._gemini_embedding(text)
@@ -112,6 +156,8 @@ class EmbeddingGenerator:
         """
         Generate embeddings for a list of strings.
         """
+        if self.backend == "local":
+            return self._local.encode([t if t and t.strip() else " " for t in texts])
         return [self.get_embedding(t) for t in texts]
 
     def _gemini_embedding(self, text: str) -> List[float]:
@@ -237,3 +283,4 @@ class EmbeddingGenerator:
 
 # Global instance
 embedding_service = EmbeddingGenerator(dimension=settings.EMBEDDING_DIMENSION)
+embedding_service.set_backend(settings.EMBEDDING_BACKEND)

@@ -1,0 +1,48 @@
+{
+ "n": 200,
+ "device": "CPU",
+ "components": {
+  "sentence embedding (MiniLM)": {
+   "mean_ms": 15.86,
+   "p50_ms": 15.52,
+   "p95_ms": 23.22
+  },
+  "anomaly signal with certification (kNN, 150 noisy copies)": {
+   "mean_ms": 25.3,
+   "p50_ms": 21.26,
+   "p95_ms": 46.47
+  },
+  "fine-tuned classifier": {
+   "mean_ms": 15.23,
+   "p50_ms": 14.61,
+   "p95_ms": 23.26
+  },
+  "NLI cross-encoder, 5 memory pairs": {
+   "mean_ms": 85.55,
+   "p50_ms": 80.16,
+   "p95_ms": 114.09
+  }
+ },
+ "pipelines": {
+  "original": {
+   "mean_ms": 26.37,
+   "p50_ms": 25.21,
+   "p95_ms": 29.49
+  },
+  "profile_knn": {
+   "mean_ms": 114.52,
+   "p50_ms": 109.69,
+   "p95_ms": 168.6
+  },
+  "learned_behaviour": {
+   "mean_ms": 121.8,
+   "p50_ms": 117.53,
+   "p95_ms": 175.99
+  },
+  "full": {
+   "mean_ms": 131.32,
+   "p50_ms": 128.46,
+   "p95_ms": 195.59
+  }
+ }
+}

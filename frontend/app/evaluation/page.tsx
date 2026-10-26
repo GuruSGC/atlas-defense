@@ -20,13 +20,15 @@ import { Button } from "@/components/ui/Button";
 import { StatCard } from "@/components/ui/StatCard";
 import { Badge } from "@/components/ui/Badge";
 import { api } from "@/lib/api";
-import { EvaluationSummary, EvaluationReport } from "@/lib/types";
+import { EvaluationSummary, EvaluationReport, BenchmarkV4 } from "@/lib/types";
 import { ReportSections } from "@/components/evaluation/ReportSections";
+import { V4Sections } from "@/components/evaluation/V4Sections";
 import { formatDate, formatScore } from "@/lib/utils";
 
 export default function EvaluationPage() {
   const [evaluation, setEvaluation] = useState<EvaluationSummary | null>(null);
   const [report, setReport] = useState<EvaluationReport | null>(null);
+  const [v4, setV4] = useState<BenchmarkV4 | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [runningBenchmark, setRunningBenchmark] = useState<boolean>(false);
 
@@ -36,6 +38,7 @@ export default function EvaluationPage() {
       const data = await api.getEvaluationSummary();
       setEvaluation(data);
       api.getEvaluationReport().then(setReport).catch(() => setReport(null));
+      api.getBenchmarkV4().then(setV4).catch(() => setV4(null));
     } catch (err) {
       console.error("Failed to load evaluation metrics:", err);
     } finally {
@@ -365,6 +368,7 @@ export default function EvaluationPage() {
         </CardContent>
       </Card>
 
+      {v4 && <V4Sections data={v4} />}
       {report && <ReportSections report={report} />}
     </div>
   );

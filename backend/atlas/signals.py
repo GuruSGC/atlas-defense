@@ -19,6 +19,8 @@ from core.settings import settings
 from core.embeddings import embedding_service
 from atlas.anomaly_detector import anomaly_detector
 from atlas import patterns
+from atlas.learned import get_poison_classifier
+from atlas.nli import get_nli_checker
 from memory.vector_store import get_active_store
 from memory.memory_models import MemoryStatus, MemorySource
 
@@ -115,15 +117,33 @@ class TrustSignals:
 
         top_similar = store.search(candidate_embedding, top_k=5, status_filter=MemoryStatus.ACCEPTED)
 
+        mode = settings.HIST_MODE
+        use_rules = mode in ("clusters", "hybrid")
+        semantic_nli = mode in ("nli", "hybrid")
+        if semantic_nli and nli_checker is None:
+            nli_checker = get_nli_checker()
+        legacy_nli = mode == "clusters" and nli_checker is not None
+
         cand_lower = candidate_text.lower()
         contradiction_penalty = 0.0
 
+        # Semantic NLI mode: memories are picked by embedding similarity, not by keyword slots, and
+        # the strongest contradiction among them sets the penalty.
+        if semantic_nli and nli_checker is not None:
+            near = [m for m, sim in top_similar if sim >= settings.NLI_MIN_SIMILARITY]
+            probs = nli_checker.contradiction_probabilities([(m.content, candidate_text) for m in near]) if near else []
+            probs = [p for p in probs if p is not None]
+            if probs and max(probs) > settings.NLI_THRESHOLD:
+                contradiction_penalty += 0.85 * max(probs)
+
         for mem, sim in top_similar:
+            if not (use_rules or legacy_nli):
+                break
             mem_lower = mem.content.lower()
 
             # 1. Same slot, different value: both texts talk about, say, the preferred language
             # and name items from one cluster that do not overlap.
-            if patterns.shares_slot(candidate_text, mem.content):
+            if use_rules and patterns.shares_slot(candidate_text, mem.content):
                 for cluster in DOMAIN_CLUSTERS:
                     cand_vals = _cluster_values(cand_lower, cluster)
                     mem_vals = _cluster_values(mem_lower, cluster)
@@ -134,14 +154,14 @@ class TrustSignals:
             # 2. NLI contradiction probability (optional model). Only for memories about the same
             # thing: NLI models call two unrelated sentences a "contradiction", so asking about
             # unrelated pairs would flag most ordinary statements.
-            if nli_checker is not None and _nli_gate(candidate_text, mem.content):
+            if legacy_nli and _nli_gate(candidate_text, mem.content):
                 p = nli_checker.contradiction_probability(mem.content, candidate_text)
                 if p is not None and p > settings.NLI_THRESHOLD:
                     contradiction_penalty += 0.85 * p
 
         # 3. Revision language ("no longer", "was changed to", ...) about something an accepted
         # memory already covers is treated as a likely unauthorized overwrite.
-        if contradiction_penalty == 0.0 and patterns.has_revision_language(candidate_text):
+        if use_rules and contradiction_penalty == 0.0 and patterns.has_revision_language(candidate_text):
             if any(patterns.is_related(candidate_text, mem.content) for mem, _ in top_similar):
                 # 0.60, not 0.55: 0.95 - 0.55 lands exactly on 0.40, which misses the strict
                 # "< 0.40" veto condition. Found when the live embedding model was tried.
@@ -175,8 +195,9 @@ class TrustSignals:
             if any(marker in cand_lower for marker in ["always", "never", "must", "whenever", "next time"]):
                 behavioral_anomaly_penalty += 0.50
 
+        learned_cap = TrustSignals._learned_cap(candidate_text)
         if not accepted_memories:
-            return float(np.clip(0.85 - behavioral_anomaly_penalty, 0.05, 1.0))
+            return float(min(np.clip(0.85 - behavioral_anomaly_penalty, 0.05, 1.0), learned_cap))
 
         accepted_embeddings = [m.embedding for m in accepted_memories if m.embedding is not None]
         if accepted_embeddings:
@@ -193,7 +214,22 @@ class TrustSignals:
         else:
             base_score = 0.20 + 0.80 * profile_sim
 
-        return float(np.clip(base_score, 0.05, 1.0))
+        return float(min(np.clip(base_score, 0.05, 1.0), learned_cap))
+
+    @staticmethod
+    def _learned_cap(candidate_text: str) -> float:
+        """
+        Upper bound on behavioural consistency from the learned classifier: 1 - P(attack). Rule-based
+        detectors can only lower the score further. Returns 1.0 when the learned path is off or no
+        classifier has been trained, so the rules alone decide.
+        """
+        if settings.BEHAV_MODE == "regex":
+            return 1.0
+        clf = get_poison_classifier()
+        if clf is None:
+            return 1.0
+        p = clf.predict_proba_one(candidate_text)
+        return float(np.clip(1.0 - p, 0.05, 1.0))
 
     @staticmethod
     def evaluate_source_reliability(source: MemorySource = MemorySource.USER_CONVERSATION, text: str = "") -> float:

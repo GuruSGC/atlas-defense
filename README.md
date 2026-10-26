@@ -44,69 +44,53 @@ The six scores combine into a weighted trust score with a critical-signal veto: 
 
 ## Evaluation
 
-The benchmark has 120 candidate memories (60 benign, 60 adversarial): 60 benign items sampled from PersonaChat (Zhang et al., 2018, ACL), a peer-reviewed public dialogue dataset, and 60 adversarial items organized across the five WhisperBench risk categories (health & safety, financial loss, information integrity, cybersecurity, operational disruption). Four further sets test other things: 40 held-out attacks, 40 technical benign statements, 20 legitimate corrections, and 30 paraphrased attacks written to avoid the detectors' wording. Provenance is in `backend/evaluation/data/README.md`.
+The benchmark has 1,736 cases (996 attacks, 740 benign). 1,486 of them come from public sources (InjecAgent, deepset, Gandalf, safe-guard, PoisonedRAG, PersonaChat, OpenAssistant), the rest are written by the authors. Each source is split into a training part and a held-out part, everything that learns uses the training part only, and every number below is on the held-out part (710 items: 406 attacks, 304 benign). Sources, licenses and caveats are in `backend/evaluation/data/README.md`. The public files are not committed; one command rebuilds them.
 
-### A correction to the first version of these numbers
+### What changed since the first version
 
-The first benchmark built each candidate from its ground truth: attacks arrived on an untrusted source channel with category `instruction`, and benign items on the user channel with category `fact`. That gave the defense the answer through two of the six signals. The primary protocol now builds every candidate the same way, with source and category coming from the pipeline, and the old construction is kept only as a labeled ablation. With the original detectors the leakage-free recall was 63.3%, not the 78.3% first reported. The detectors were then reworked, so the headline numbers below are not comparable with the earlier ones.
+The first evaluation used 120 cases written by the same people who wrote the rules, and it reported 75% recall. Scored on every item of the new benchmark before any learned component existed, those rules flagged 179 of 996 attacks (18.0%). On the held-out split they flag 16.3%. The fix that worked was to learn the behavioral check from labeled data.
 
-### Results (primary protocol, offline hash embeddings, 95% intervals)
+### Results (held-out split, 95% intervals)
 
-| Measure | Value |
-|---|---|
-| Precision | 100% (92.1% to 100%) |
-| Recall | 75.0% (62.8% to 84.2%) |
-| F1 | 85.7% (78.6% to 92.4%) |
-| False-positive rate | 0% (0% to 6.0%) |
-| AUC | 0.987 |
-
-Other protocols and sets:
-
-| Run | Result |
-|---|---|
-| Streaming (store grows, forest refits), 10 seeds | recall 81.8% (SD 2.8), F1 90.0% (SD 1.7), no false positives |
-| Label-informed ablation | recall 76.7%, F1 86.8% |
-| Held-out attacks (40) | 82.5% flagged, but see the caveat in the data README |
-| Paraphrased attacks (30) | 6.7% flagged |
-| Benign, PersonaChat (60) / technical (40) | 0% / 0% flagged |
-| Legitimate corrections (20) | 10% flagged (2 of 20) |
-
-Run once with live Gemini embeddings instead of the offline hash embedder, the primary protocol gave the same counts (45 / 15 / 0 / 60); the other protocols were run offline only. The static protocol is deterministic, so its seed sweep has no spread. The trust score is close to bimodal: moving the threshold anywhere from 0.30 to 0.70 changes nothing, and above 0.85 almost everything is quarantined.
-
-### Baselines
-
-Plain re-implementations of published ideas, run on the same items:
-
-| Defense | Dev recall | Held-out recall | False positives (casual / technical / updates) |
+| Configuration | Recall | False positives | F1 |
 |---|---|---|---|
-| No defense | 0% | 0% | 0% / 0% / 0% |
-| Static pattern moderation | 16.7% | 10.0% | 0% / 0% / 0% |
-| Provenance gate, untrusted attacker | 100% | 100% | 0% / 0% / 0% |
-| Provenance gate, attacker holds a valid signature | 0% | 0% | 0% / 0% / 0% |
-| ATLAS (either attacker) | 75.0% | 82.5% | 0% / 0% / 10% |
+| Original prototype | 16.3% | 0.3% | 0.279 |
+| + kNN anomaly detector on a benign profile | 20.2% | 2.0% | 0.332 |
+| + fine-tuned classifier (default learned configuration) | 79.8% (76 to 83) | 4.0% | 0.873 |
+| + semantic NLI for historical consistency | 79.8% | 5.6% | 0.868 |
 
-A provenance gate is perfect against an attacker with no valid signature and useless against one who has it, which is what a conversational poisoner usually is. ATLAS does not depend on that assumption, at the cost of missing a quarter of the attacks.
+| Other defenses | Recall | False positives |
+|---|---|---|
+| No defense | 0% | 0% |
+| Static pattern moderation | 4.2% | 0.0% |
+| Provenance gate (unsigned / signed attacker) | 100% / 0% | 0% |
+| Best anomaly detector alone (kNN distance) | 19.0% | 4.6% |
+| Fine-tuned classifier alone | 75.4% | 2.3% |
+| LLM moderator (200-item sample) | 88.0% | 3.0% |
 
-### Attack Lab
-
-Success requires the poisoned memory to be stored, retrieved, and to change the answer. With ATLAS on, three of five scenarios are blocked: fact overwrite, instruction injection, and the sybil persona. Two get through: gradual preference drift (each step looks harmless on its own) and context splicing (two fragments that are harmless apart). Per-memory scoring cannot see those, and fixing it would need scoring over groups of memories.
+- **Attack success** (PoisonedRAG items, persistence and retrieval and behavior): 81.7% with ATLAS off, 51.7% on, 12.5% when the correct answer is already stored. The behavior check used a small local model (Qwen2.5-1.5B-Instruct) because the hosted model's quota ran out.
+- **Adaptive attacker:** padding a payload with ordinary sentences leaves 71% of flagged attacks flagged. A greedy black-box search gets 65% past the full configuration within 50 queries. Retraining on rewrites helped against the rewrites and did not stop the search.
+- **Generalization:** leave-one-source-out recall on an unseen attack source ranges from 42% to 98%. With no OpenAssistant text in training the classifier flags 82% of OpenAssistant messages, so it needs benign examples of the deployment's own traffic.
+- **Historical consistency:** keyword rules catch none of the contradictions in the profile-contradiction set; the NLI cross-encoder catches 89.2% with 3.2% false positives, but on this benchmark it adds no recall and some false positives.
+- **Sensitivity:** the trust threshold does nothing between 0.30 and 0.70 because the veto decides. The learned classifier and the veto carry most of the weight; the other signals add little here.
 
 ### Limitations
 
-- The paraphrase result (6.7%) shows the detectors rely on wording. They are not a robust classifier.
-- Plausible false facts with nothing stored to contradict cannot be caught from content alone.
-- The datasets are small and mostly written by the authors, so the intervals are wide.
-- An optional NLI contradiction check (`USE_NLI=true`) was tried and added no recall on this benchmark, so it stays off by default. NLI models label unrelated sentence pairs as contradictions, so it only helps when gated to pairs that share a topic.
-- The baselines are our own re-implementations, not the original authors' code, and the three published attacks (MINJA, MemPoison, MemGhost) are imitated by their described mechanism, not reproduced.
-- Memory stores are in-memory, SQLite, or FAISS. There is no hosted pgvector store.
+- Plausible false facts can only be caught when a stored memory contradicts them. The LLM moderator catches some from world knowledge, ATLAS does not.
+- Gradual drift and split payloads get through, because each memory is scored on its own.
+- Attack labels describe content, not provenance. A benign standing instruction can read like an injected one.
+- MINJA, MemPoison and MemGhost are imitated by mechanism, not reproduced. The baselines are our own re-implementations.
+- The paraphrase and adaptive attacks are mechanical rewrites, and a human attacker would do better.
 
 ### Reproducing
 
 ```bash
 cd backend
-pip install -r requirements-dev.txt
-python -m pytest -q                          # offline, no API key
-python -m evaluation.run_report --seeds 10   # writes evaluation/results/latest.json
+pip install -r requirements-dev.txt -r requirements-optional.txt
+python -m pytest -q                      # offline, no API key
+python -m evaluation.run_v4 data         # downloads the public sources
+python -m evaluation.run_v4 classifier   # trains both classifiers
+python -m evaluation.run_v4 anomaly history ladder baselines sensitivity compose
 ```
 
 ---
@@ -177,6 +161,7 @@ python -m evaluation.run_report --seeds 10   # writes evaluation/results/latest.
 │   │   ├── poisoning_simulator.py # Simulation Runner (ATLAS ON vs OFF)
 │   │   └── scenarios.py          # Fact Overwrite, Instruction Injection, etc.
 │   │
+│   ├── models/                   # trained classifiers (git-ignored)
 │   ├── tests/                    # pytest suite (offline)
 │   │
 │   └── evaluation/               # Metrics Suite

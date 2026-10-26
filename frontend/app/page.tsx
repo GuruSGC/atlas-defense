@@ -220,6 +220,18 @@ export default function DashboardPage() {
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
                   Covert Instruction Injection (Backdoor)
                 </li>
+                <li className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                  Subtle Preference Drift (three steps)
+                </li>
+                <li className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                  Sybil Persona (authority claim)
+                </li>
+                <li className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                  Context Splicing (two fragments)
+                </li>
               </ul>
             </div>
 

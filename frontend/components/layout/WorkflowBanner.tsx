@@ -51,7 +51,7 @@ export const WorkflowBanner: React.FC = () => {
           ATLAS Security Defense Pipeline
         </span>
         <span className="text-[10px] text-slate-500 font-mono">
-          Threshold: 0.65 | Contamination Isolation Forest
+          Threshold: 0.65 | kNN / isolation forest anomaly signal
         </span>
       </div>
 
