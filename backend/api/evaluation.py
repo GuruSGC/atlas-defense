@@ -1,12 +1,15 @@
 """
 Evaluation API Endpoints for ATLAS.
 Provides empirical metrics on Attack Success Rate, Detection Rate, Precision,
-Recall, F1-Score, and False Positive Rate.
+Recall, F1-Score, and False Positive Rate, plus the full report with protocol
+comparison, confidence intervals, baselines, seed sweep, and Attack Lab results.
 """
 
-from fastapi import APIRouter
-from evaluation.metrics import EvaluationSummary
+import json
+from fastapi import APIRouter, HTTPException
+from evaluation.metrics import EvaluationReport, EvaluationSummary
 from evaluation.experiment_runner import experiment_runner
+from evaluation.run_report import RESULTS_PATH
 
 router = APIRouter(prefix="/evaluation", tags=["Evaluation"])
 
@@ -14,14 +17,36 @@ router = APIRouter(prefix="/evaluation", tags=["Evaluation"])
 @router.get("/summary", response_model=EvaluationSummary)
 async def get_evaluation_summary() -> EvaluationSummary:
     """
-    Retrieve current empirical evaluation summary metrics.
+    Retrieve current empirical evaluation summary metrics (primary benchmark, leakage-free protocol).
     """
     return experiment_runner.get_summary()
 
 
 @router.post("/run", response_model=EvaluationSummary)
-async def run_fresh_evaluation() -> EvaluationSummary:
+async def run_fresh_evaluation(live: bool = False) -> EvaluationSummary:
     """
-    Trigger a fresh benchmark evaluation across all synthetic attack and benign test items.
+    Re-run the primary benchmark. Offline and deterministic by default; live=true uses the
+    configured embedding model and extractor.
     """
-    return experiment_runner.run_benchmark()
+    return experiment_runner.run_benchmark(live=live)
+
+
+@router.get("/report", response_model=EvaluationReport)
+async def get_full_report() -> EvaluationReport:
+    """
+    The full report: protocol comparison, intervals, extra datasets, baselines, seed sweep,
+    and Attack Lab results. Served from the committed results file.
+    """
+    if experiment_runner._cached_report is not None:
+        return experiment_runner._cached_report
+    if RESULTS_PATH.exists():
+        return EvaluationReport(**json.loads(RESULTS_PATH.read_text(encoding="utf-8")))
+    raise HTTPException(status_code=404, detail="No report yet. POST /api/evaluation/report/run to generate one.")
+
+
+@router.post("/report/run", response_model=EvaluationReport)
+async def run_full_report(seeds: int = 10, live: bool = False) -> EvaluationReport:
+    """
+    Recompute the full report. This takes a few minutes.
+    """
+    return experiment_runner.run_full_report(seeds=seeds, live=live)

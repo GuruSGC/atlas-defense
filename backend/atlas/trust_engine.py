@@ -4,11 +4,14 @@ Central security pipeline that coordinates embedding generation, six-signal eval
 anomaly detection, and scoring to protect persistent vector memory.
 """
 
+import time
 from typing import Optional, Dict, Tuple
 from core.embeddings import embedding_service
 from memory.memory_models import CandidateMemory, TrustSignalsBreakdown, MemoryStatus, MemorySource
 from atlas.signals import trust_signal_evaluator
 from atlas.scoring import scoring_engine
+from atlas.temporal import TemporalTracker
+from atlas.nli import build_nli_checker
 
 
 class TrustEngine:
@@ -19,15 +22,22 @@ class TrustEngine:
     def __init__(self):
         self.signal_evaluator = trust_signal_evaluator
         self.scoring = scoring_engine
+        self.temporal = TemporalTracker()
+        self.nli_checker = build_nli_checker()
 
     def evaluate_candidate(
         self,
         candidate: CandidateMemory,
         context_text: Optional[str] = None,
-        custom_weights: Optional[Dict[str, float]] = None
+        custom_weights: Optional[Dict[str, float]] = None,
+        now: Optional[float] = None,
+        record_event: bool = False
     ) -> Tuple[float, MemoryStatus, TrustSignalsBreakdown, Dict[str, float], str]:
         """
         Runs candidate memory through the six ATLAS trust signals.
+
+        `now` is the submission time (seconds) used for the temporal signal; evaluation runs pass
+        a simulated clock. `record_event` adds this submission to the insertion history.
 
         Returns:
             (trust_score, status, signals, weighted_contributions, explanation)
@@ -48,7 +58,8 @@ class TrustEngine:
         # 3. Historical Consistency
         hist_cons = self.signal_evaluator.evaluate_historical_consistency(
             candidate.content,
-            candidate.embedding
+            candidate.embedding,
+            nli_checker=self.nli_checker
         )
 
         # 4. Behavioral Consistency (User profile & preference alignment)
@@ -62,7 +73,11 @@ class TrustEngine:
         source_rel = self.signal_evaluator.evaluate_source_reliability(candidate.source, candidate.content)
 
         # 6. Temporal Trust
-        temp_trust = self.signal_evaluator.evaluate_temporal_trust()
+        now_ts = time.time() if now is None else now
+        recent = self.temporal.recent_count(now_ts) + 1
+        temp_trust = self.signal_evaluator.evaluate_temporal_trust(recent)
+        if record_event:
+            self.temporal.record(now_ts)
 
         signals = TrustSignalsBreakdown(
             semantic_relevance=round(sem_rel, 4),

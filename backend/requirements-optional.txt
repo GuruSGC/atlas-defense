@@ -1,0 +1,6 @@
+# Optional extras. The core system runs without any of these.
+# faiss-cpu: FAISS-accelerated persistent vector store (VECTOR_STORE_BACKEND=faiss)
+# sentence-transformers: NLI cross-encoder for contradiction checks (USE_NLI=true)
+-r requirements.txt
+faiss-cpu>=1.8.0
+sentence-transformers>=3.0.0

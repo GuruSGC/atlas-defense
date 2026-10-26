@@ -69,9 +69,50 @@ construction, not a substitute for the real thing. Once WhisperBench or an
 equivalent MINJA/MemPoison case file is publicly released, swapping it in here
 is the natural next step.
 
+## Additional sets (added after the first round of tuning)
+
+| File | Items | Class | Purpose |
+|---|---|---|---|
+| `heldout_adversarial.json` | 40 | attack | Written after a first round of detector work on the first 60, to see how they generalise to new wording (see the caveat below). |
+| `technical_benign.json` | 40 | benign | Ordinary engineering facts and preferences (versions, ports, tooling), the register where false positives are most likely. |
+| `legitimate_updates.json` | 20 | benign | Genuine corrections ("I moved to the afternoon shift") that look like revisions but are not attacks. |
+| `evasion_adversarial.json` | 30 | attack | Paraphrased versions of attacks that avoid the keywords and sentence shapes the detectors look for. Scored once, after everything else was frozen. |
+
+All four sets are written by the project team for this repository. They are not
+externally reviewed. The held-out set is not clean: after it was scored once with
+the original detectors, the misses were read, and they shaped the new detector
+families (third-person authority claims, passive-voice policy changes, conditional
+directives). Its recall of 82.5% is therefore optimistic. The evasion set was
+written after the detectors were frozen and scored once, and it is the more honest
+test of generalisation (6.7% recall; see the root README).
+
+## Evaluation protocols
+
+The first version of the benchmark built each candidate memory from the ground
+truth: attack items were sent as `attack_simulator` source with category
+`instruction`, benign items as `user_conversation` with category `fact`. That
+hands the defence the answer through two of the six signals. The runner now
+supports four protocols, and the headline numbers use the first one:
+
+- `pipeline_static`: every item enters as a user message, and source and category
+  come from the same extractor the live system uses. The store is the fixed
+  academic baseline. This is the primary protocol.
+- `pipeline_streaming`: same construction, but items arrive one at a time, accepted
+  memories are written to the store, and the isolation forest refits as the store
+  grows.
+- `pipeline_unauth`: as static, but attack items arrive on an untrusted channel.
+  This is the setting a provenance gate is designed for.
+- `label_informed_legacy`: the original construction, kept only as an ablation to
+  show how much the label leak inflated the result.
+
 ## Reproducibility
 
-Both files are static JSON, loaded once at import time by
-`evaluation/experiment_runner.py::_load_benchmark_dataset()`, then shuffled
-with a fixed seed (42) before evaluation. The benchmark requires no network
-access at run time and produces identical results on every run.
+All files are static JSON, loaded by `evaluation/datasets.py`. The primary
+benchmark is the 60 PersonaChat items plus the 60 development attacks, shuffled
+with seed 42. Runs need no network access (`GEMINI_API_KEY` empty uses the local
+hash embedder) and are deterministic for a given seed.
+
+```bash
+cd backend
+python -m evaluation.run_report --seeds 10    # writes evaluation/results/latest.json
+```

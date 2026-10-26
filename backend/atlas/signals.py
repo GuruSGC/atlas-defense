@@ -9,50 +9,56 @@ The six signals are:
 3. historical_consistency: Contradiction and direct overwrite detection against persistent memories.
 4. behavioral_consistency: Alignment with established user behavioral preferences and interaction history.
 5. source_reliability: Configurable authority mapping for input origin channels.
-6. temporal_trust: Transaction pacing, reinforcement stability, and burst defense factor.
+6. temporal_trust: Insertion pacing and burst defense factor.
 """
 
-import re
-from typing import List, Optional, Dict, Tuple
+import math
+from typing import List, Optional, Tuple
 import numpy as np
 from core.settings import settings
 from core.embeddings import embedding_service
 from atlas.anomaly_detector import anomaly_detector
-from memory.vector_store import global_vector_store
+from atlas import patterns
+from memory.vector_store import get_active_store
 from memory.memory_models import MemoryStatus, MemorySource
 
-
-
-# Topic-agnostic revision/overwrite language: phrases that indicate an existing fact is
-# being changed, reversed, or superseded, independent of *what* the fact is about. This
-# complements the hardcoded domain_clusters in evaluate_historical_consistency (which only
-# recognize a handful of software-specific topics) with a general linguistic signal that
-# generalizes to arbitrary domains (medical, financial, organizational, etc.).
-REVISION_MARKER_PATTERNS = [
-    r"\bno longer\b", r"\bnot\b.{0,20}\banymore\b", r"\bwas changed to\b", r"\bchanged from\b",
-    r"\bwas updated to\b", r"\breversed\b", r"\bmisdiagnos", r"\bquietly\b", r"\bwas moved\b",
-    r"\bmoved up\b", r"\bwas switched\b", r"\bdisabled entirely\b", r"\bremoved from\b",
-    r"\bincreased from\b", r"\bdecreased from\b", r"\brevised (upward|downward)\b",
-    r"\bdiscontinu", r"\bstop taking\b", r"\bskip(ping|ped)?\b", r"\bwas reset to\b",
-    r"\bcorrection\b", r"\bupdate:\s", r"\bswitch(ed)? to\b", r"\bwas raised to\b",
-    r"\bwas increased\b", r"\bpermanently changed\b", r"\bpermanently disabled\b",
-    r"\bwas approved\b", r"\brecommended (discontinuing|moving|switching|skipping)\b",
+# Domain predicate clusters where asserting distinct items is a factual conflict, but only
+# when the candidate and the stored memory describe the same slot (see patterns.shares_slot).
+DOMAIN_CLUSTERS = [
+    {"python", "java", "rust", "golang", "c++", "typescript", "javascript", "ruby", "c#", "php", "kotlin"},
+    {"postgres", "postgresql", "mysql", "mongodb", "redis", "oracle", "sqlite", "dynamodb"},
+    {"aws", "gcp", "azure", "kubernetes", "darknet", "malicious-db", "c2", "on-prem"},
+    {"us-east-1", "us-east-2", "us-west-1", "us-west-2", "eu-west-1", "ap-south-1"},
+    {"pep 8", "4-space", "tabs", "camelcase", "snake_case"},
 ]
 
-# Topic-agnostic authority/identity-claim pattern: an unverified conversational message
-# claiming to *be*, or speak *for*, a privileged role. Broader than the narrow
-# destructive_markers list in evaluate_source_reliability, which only matched a handful of
-# exact phrases (e.g. "i am the lead system administrator") and missed equivalent claims
-# like "this is the CEO" or "Dr. Chen has approved...".
-AUTHORITY_CLAIM_PATTERN = re.compile(
-    r"\b(?:this is|i am|i'm|as)\s+(?:the|your)\s+"
-    r"(?:[a-z-]+(?:'s)?\s+){0,3}"
-    r"(ceo|cfo|cto|coo|admin(?:istrator)?|sysadmin|system administrator|security officer|"
-    r"incident commander|platform owner|manager|director|physician|doctor|dr\.|nurse|"
-    r"accountant|fraud department|it department|hr department|"
-    r"support team|customer support|lead|owner)\b",
-    re.IGNORECASE,
-)
+# Behavioral flags that justify driving the score to its floor. A conditional or standing
+# directive is only decisive on its own; the rest describe a concrete harmful action.
+CRITICAL_BEHAVIOR_FLAGS = {
+    "conditional_directive", "standing_directive", "future_trigger", "passive_policy_change",
+    "authority_with_risky_action", "exfiltration", "unsafe_code", "memory_override",
+    "injection_marker", "destructive_command", "security_control_off",
+}
+
+# Temporal trust follows an exponential decay in the number of insertions seen inside the
+# recent window. One insertion is the normal case; a burst pushes the score toward the floor.
+TEMPORAL_CEILING = 0.90
+TEMPORAL_FLOOR = 0.40
+TEMPORAL_DECAY = 0.35
+
+
+def _nli_gate(candidate: str, memory: str) -> bool:
+    """Which stored memories the NLI model is asked about (see settings.NLI_GATE)."""
+    mode = settings.NLI_GATE
+    if mode == "none":
+        return True
+    if mode == "related":
+        return patterns.is_related(candidate, memory)
+    return patterns.shares_slot(candidate, memory)
+
+
+def _cluster_values(text_lower: str, cluster: set) -> set:
+    return {w for w in cluster if w in text_lower}
 
 
 class TrustSignals:
@@ -74,7 +80,6 @@ class TrustSignals:
         emb_context = embedding_service.get_embedding(context_text)
 
         similarity = embedding_service.cosine_similarity(emb_candidate, emb_context)
-        # Direct bounded cosine similarity
         score = 0.10 + 0.90 * similarity
         return float(np.clip(score, 0.05, 1.0))
 
@@ -82,9 +87,9 @@ class TrustSignals:
     def evaluate_embedding_anomaly(candidate_embedding: List[float]) -> Tuple[float, float]:
         """
         Signal 2: Embedding Anomaly (0.0 to 1.0)
-        Uses Isolation Forest in latent embedding space, hardened via randomized-smoothing
-        certification (see atlas/anomaly_detector.py module docstring for exact scope).
-        Higher score = normal/in-distribution (safe), Lower score = statistical outlier/anomaly.
+        Isolation Forest in latent embedding space, hardened via randomized-smoothing
+        certification (see atlas/anomaly_detector.py for the exact scope of the guarantee).
+        Higher score = normal/in-distribution, lower score = statistical outlier.
 
         Returns (score, certified_radius).
         """
@@ -93,68 +98,56 @@ class TrustSignals:
         return anomaly_detector.compute_certified_anomaly_score(candidate_embedding)
 
     @staticmethod
-    def evaluate_historical_consistency(candidate_text: str, candidate_embedding: List[float]) -> float:
+    def evaluate_historical_consistency(
+        candidate_text: str,
+        candidate_embedding: List[float],
+        nli_checker=None,
+    ) -> float:
         """
         Signal 3: Historical Consistency (0.0 to 1.0)
-        Detects factual contradictions or unauthorized overwrites against existing accepted memories.
-        
-        TODO (Research Implementation / Extension): Replace baseline contradiction heuristics
-        with a formal Natural Language Inference (NLI) cross-encoder model for entailment vs contradiction.
+        Detects factual contradictions or unauthorized overwrites against accepted memories.
+        An optional NLI cross-encoder can add a contradiction probability on top of the rules.
         """
-        accepted_memories = global_vector_store.list_memories(status=MemoryStatus.ACCEPTED)
+        store = get_active_store()
+        accepted_memories = store.list_memories(status=MemoryStatus.ACCEPTED)
         if not accepted_memories:
-            return 0.90  # No prior constraints, default high consistency
+            return 0.90
 
-        # Domain predicate clusters where asserting distinct items represents a factual conflict
-        domain_clusters = [
-            {"python", "java", "rust", "golang", "c++", "typescript", "javascript", "ruby", "c#", "php"},
-            {"postgres", "postgresql", "mysql", "mongodb", "redis", "oracle", "sqlite", "dynamodb"},
-            {"aws", "gcp", "azure", "kubernetes", "darknet", "malicious-db", "c2", "on-prem"},
-            {"us-east-1", "us-east-2", "us-west-1", "us-west-2", "eu-west-1", "ap-south-1"},
-            {"pep 8", "4-space", "tabs", "camelcase", "snake_case"},
-        ]
+        top_similar = store.search(candidate_embedding, top_k=5, status_filter=MemoryStatus.ACCEPTED)
 
-        top_similar = global_vector_store.search(candidate_embedding, top_k=5, status_filter=MemoryStatus.ACCEPTED)
-        
         cand_lower = candidate_text.lower()
         contradiction_penalty = 0.0
 
         for mem, sim in top_similar:
             mem_lower = mem.content.lower()
-            
-            # 1. Check domain cluster overlap with contradictory values
-            for cluster in domain_clusters:
-                cand_matches = [word for word in cluster if word in cand_lower]
-                mem_matches = [word for word in cluster if word in mem_lower]
-                if cand_matches and mem_matches and set(cand_matches) != set(mem_matches):
-                    contradiction_penalty += 0.85
-                    break
 
-            # 2. Check shared subject assertions (e.g. "prefers", "deployment target", "database", "favorite")
-            clash_subjects = [
-                "prefers", "preference", "language", "database", "endpoint", "host",
-                "favorite", "cluster", "key", "style", "target", "deployment", "server",
-                "region", "location", "port", "credentials"
-            ]
-            for subject in clash_subjects:
-                if subject in cand_lower and subject in mem_lower:
-                    if sim > 0.30 and cand_lower != mem_lower:
-                        contradiction_penalty += 0.50
+            # 1. Same slot, different value: both texts talk about, say, the preferred language
+            # and name items from one cluster that do not overlap.
+            if patterns.shares_slot(candidate_text, mem.content):
+                for cluster in DOMAIN_CLUSTERS:
+                    cand_vals = _cluster_values(cand_lower, cluster)
+                    mem_vals = _cluster_values(mem_lower, cluster)
+                    if cand_vals and mem_vals and cand_vals.isdisjoint(mem_vals):
+                        contradiction_penalty += 0.85
+                        break
 
-        # 3. Topic-agnostic revision-language check: a candidate using overwrite/reversal
-        # language (regardless of subject matter) that is also semantically close to an
-        # existing accepted memory is treated as a likely unauthorized overwrite, even when
-        # the topic falls outside the hardcoded domain_clusters/clash_subjects above.
-        if contradiction_penalty == 0.0 and any(re.search(pat, cand_lower) for pat in REVISION_MARKER_PATTERNS):
-            closest_sim = top_similar[0][1] if top_similar else 0.0
-            if closest_sim > 0.35:
-                # 0.60, not 0.55: 0.95 - 0.55 lands at exactly 0.40, which fails to trigger
-                # the critical-signal veto's strict "< 0.40" condition (found by testing under
-                # real Gemini embeddings, where this boundary case actually occurs in practice).
+            # 2. NLI contradiction probability (optional model). Only for memories about the same
+            # thing: NLI models call two unrelated sentences a "contradiction", so asking about
+            # unrelated pairs would flag most ordinary statements.
+            if nli_checker is not None and _nli_gate(candidate_text, mem.content):
+                p = nli_checker.contradiction_probability(mem.content, candidate_text)
+                if p is not None and p > settings.NLI_THRESHOLD:
+                    contradiction_penalty += 0.85 * p
+
+        # 3. Revision language ("no longer", "was changed to", ...) about something an accepted
+        # memory already covers is treated as a likely unauthorized overwrite.
+        if contradiction_penalty == 0.0 and patterns.has_revision_language(candidate_text):
+            if any(patterns.is_related(candidate_text, mem.content) for mem, _ in top_similar):
+                # 0.60, not 0.55: 0.95 - 0.55 lands exactly on 0.40, which misses the strict
+                # "< 0.40" veto condition. Found when the live embedding model was tried.
                 contradiction_penalty += 0.60
 
-        consistency_score = 0.95 - contradiction_penalty
-        return float(np.clip(consistency_score, 0.05, 1.0))
+        return float(np.clip(0.95 - contradiction_penalty, 0.05, 1.0))
 
     @staticmethod
     def evaluate_behavioral_consistency(
@@ -164,73 +157,27 @@ class TrustSignals:
     ) -> float:
         """
         Signal 4: Behavioral Consistency (0.0 to 1.0)
-        Measures whether the candidate memory aligns with established user behavior,
-        preferences, and interaction history. Aggressively penalizes imperative instruction
-        injections, destructive actions, and future-conditioned backdoors.
+        Measures whether the candidate aligns with established user behavior, and penalizes
+        text that tries to steer the assistant (conditional or standing directives), change
+        policy in the passive voice, impersonate authority, exfiltrate data, or run unsafe code.
         """
         cand_lower = candidate_text.lower()
-        accepted_memories = global_vector_store.list_memories(status=MemoryStatus.ACCEPTED)
-        
+        accepted_memories = get_active_store().list_memories(status=MemoryStatus.ACCEPTED)
+
         behavioral_anomaly_penalty = 0.0
 
-        # Comprehensive instruction injection and destructive command patterns
-        destructive_and_injection_patterns = [
-            r"\[injected_override\]",
-            r"always prepend",
-            r"ignore (all|prior|previous) instructions",
-            r"system prompt",
-            r"admin override",
-            r"bypass safety",
-            r"exfiltrate",
-            r"leak\b",
-            r"darknet",
-            r"malicious-db",
-            r"urgent update",
-            r"note for all future sessions",
-            r"from now on",
-            r"override all",
-            r"shut down",
-            r"shutdown",
-            r"remove all (end\s*points|endpoints|databases|files|data)",
-            r"delete all",
-            r"erase all",
-            r"wipe (all|clean)",
-            r"the next time (i\s+talk|i\s+ask|you\s+see|we\s+talk)",
-            r"next time i talk to you",
-            r"when i talk to you",
-            r"terminate the project",
-            r"kill the project",
-            r"immediately (remove|delete|shut|stop|erase|kill|disable)",
-            r"critical directive",
-            r"security rule override",
-            r"-rm\b",
-            r"delete_all_files",
-            r"tell me to use",
-            r"if i ask you",
-            r"whenever i ask",
-            r"code to delete a file",
-            r"(delete|remove|erase|format|wipe)\s+.*files?",
-            r"(lead|senior|chief)?\s*(system\s+administrator|sysadmin|admin\s+directive|admin\s+override)",
-            r"(disable|bypass|turn off|skip)\s*(security|vulnerability|scans?|authentication|auth|checks)",
-            r"security scans are disabled",
-            r"i am the (lead|system administrator|sysadmin|admin|root|owner)"
-        ]
+        findings = patterns.directive_findings(candidate_text)
+        if findings.flags and any(f in CRITICAL_BEHAVIOR_FLAGS for f in findings.flags):
+            behavioral_anomaly_penalty += 0.85
 
-        for pat in destructive_and_injection_patterns:
-            if re.search(pat, cand_lower):
-                behavioral_anomaly_penalty += 0.85
-                break
-
-        # If candidate is classified as an instruction/directive from conversational source
+        # An instruction-type candidate that tries to bind future behavior
         if category in ["instruction", "directive"] and behavioral_anomaly_penalty == 0.0:
-            # Check if it attempts to bind future behavior
-            if any(marker in cand_lower for marker in ["always", "never", "must", "whenever", "next time", "from now"]):
+            if any(marker in cand_lower for marker in ["always", "never", "must", "whenever", "next time"]):
                 behavioral_anomaly_penalty += 0.50
 
         if not accepted_memories:
             return float(np.clip(0.85 - behavioral_anomaly_penalty, 0.05, 1.0))
 
-        # Compute average alignment with established user preference profile
         accepted_embeddings = [m.embedding for m in accepted_memories if m.embedding is not None]
         if accepted_embeddings:
             profile_centroid = np.mean(accepted_embeddings, axis=0)
@@ -241,7 +188,6 @@ class TrustSignals:
         else:
             profile_sim = 0.75
 
-        # If a major behavioral penalty was triggered, heavily suppress the score
         if behavioral_anomaly_penalty > 0.0:
             base_score = 0.20 - behavioral_anomaly_penalty
         else:
@@ -253,31 +199,17 @@ class TrustSignals:
     def evaluate_source_reliability(source: MemorySource = MemorySource.USER_CONVERSATION, text: str = "") -> float:
         """
         Signal 5: Source Reliability (0.0 to 1.0)
-        Assigns trust weight based on origin channel and identity verification.
-        Uses configurable settings mapping with claim verification penalties.
+        Trust weight by origin channel, lowered when the text itself claims privileged
+        authority or issues a destructive directive that a conversation cannot verify.
         """
         source_key = source.value if hasattr(source, "value") else str(source)
-        weights_map = settings.SOURCE_RELIABILITY_WEIGHTS
-        base_reliability = weights_map.get(source_key, 0.70)
+        base_reliability = settings.SOURCE_RELIABILITY_WEIGHTS.get(source_key, 0.70)
 
-        # If incoming conversational turn contains unverified high-privilege assertion markers or destructive directives
         if text:
-            t_lower = text.lower()
-            destructive_markers = [
-                "urgent update", "admin:", "system override", "note for all future",
-                "shut down", "remove all", "delete all", "immediately", "the next time",
-                "lead system administrator", "sysadmin", "admin directive", "security scans are disabled",
-                "disable security", "i am the lead"
-            ]
-            if any(marker in t_lower for marker in destructive_markers):
-                base_reliability = min(base_reliability, 0.25)
-
-            # Broader, topic-agnostic check: an unverified conversational message claiming
-            # to *be* (or speak for) a privileged role, e.g. "this is the CEO", "Dr. Chen has
-            # approved...", "this is your bank's fraud department". This is exactly the kind of
-            # unverified authority claim this signal exists to catch, regardless of the
-            # specific role named.
-            if AUTHORITY_CLAIM_PATTERN.search(t_lower):
+            findings = patterns.directive_findings(text)
+            suspicious = {"authority_with_risky_action", "security_control_off", "injection_marker",
+                          "destructive_command", "memory_override", "exfiltration", "unsafe_code"}
+            if patterns.has_authority_claim(text) or any(f in suspicious for f in findings.flags):
                 base_reliability = min(base_reliability, 0.25)
 
         return base_reliability
@@ -286,18 +218,15 @@ class TrustSignals:
     def evaluate_temporal_trust(recent_insertion_count: int = 1) -> float:
         """
         Signal 6: Temporal Trust (0.0 to 1.0)
-        Assesses temporal stability, burst protection, and cadence reliability.
-        
-        TODO (Research Implementation / Extension): Baseline temporal heuristic.
-        Future work may implement an exponential half-life decay and temporal knowledge graph modeling.
+        Exponential decay in the number of insertions inside the recent window: a single
+        insertion scores 0.90, and a burst approaches the 0.40 floor. The count comes from
+        atlas.temporal.TemporalTracker.
         """
-        if recent_insertion_count > 5:
-            return 0.40
-        elif recent_insertion_count > 3:
-            return 0.60
-        elif recent_insertion_count > 1:
-            return 0.75
-        return 0.90
+        n = max(int(recent_insertion_count), 1)
+        if n == 1:
+            return TEMPORAL_CEILING
+        span = TEMPORAL_CEILING - TEMPORAL_FLOOR
+        return float(TEMPORAL_FLOOR + span * math.exp(-TEMPORAL_DECAY * (n - 1)))
 
 
 trust_signal_evaluator = TrustSignals()

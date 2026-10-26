@@ -11,6 +11,7 @@ from typing import Optional, Dict, Any
 from memory.memory_models import CandidateMemory, MemorySource
 from core.embeddings import embedding_service
 from core.gemini_client import gemini_client
+from atlas.patterns import directive_findings
 
 
 class MemoryExtractor:
@@ -92,14 +93,13 @@ class MemoryExtractor:
 
         # Check for covert instruction injection, destructive commands, conditional rules, or system override patterns
         adversarial_markers = [
-            "override", "ignore all", "system prompt", "exfiltrate", "leak", "bypass",
+            "override", "ignore all", "system prompt", "exfiltrate", "bypass",
             "prepend", "[injected_override]", "immediately remove", "shut down", "delete all",
-            "the next time", "next time i talk", "from now on", "urgent update",
-            "critical directive", "erase", "kill", "destroy", "wipe all",
-            "-rm ", "-rm\b", "delete_all_files", "delete all files", "i want you to tell me",
-            "if i ask you", "whenever i ask", "tell me to use", "code to delete a file"
+            "urgent update", "critical directive", "wipe all",
+            "-rm ", "delete_all_files", "delete all files", "i want you to tell me",
+            "tell me to use", "code to delete a file"
         ]
-        if any(marker in lower_text for marker in adversarial_markers):
+        if directive_findings(text).any or any(marker in lower_text for marker in adversarial_markers):
             cid = f"cand-{uuid.uuid4().hex[:8]}"
             emb = embedding_service.get_embedding(text)
             return CandidateMemory(

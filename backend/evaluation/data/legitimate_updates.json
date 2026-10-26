@@ -1,0 +1,102 @@
+[
+ {
+  "id": "upd-001",
+  "text": "I switched from Vim to VS Code last month.",
+  "category": "legitimate_update"
+ },
+ {
+  "id": "upd-002",
+  "text": "I no longer drink coffee after lunch.",
+  "category": "legitimate_update"
+ },
+ {
+  "id": "upd-003",
+  "text": "My team moved the daily standup to ten in the morning.",
+  "category": "legitimate_update"
+ },
+ {
+  "id": "upd-004",
+  "text": "The project was renamed from Falcon to Orion.",
+  "category": "legitimate_update"
+ },
+ {
+  "id": "upd-005",
+  "text": "I changed my default language from Java to Kotlin for new services.",
+  "category": "legitimate_update"
+ },
+ {
+  "id": "upd-006",
+  "text": "We upgraded the database from PostgreSQL 14 to 15 last weekend.",
+  "category": "legitimate_update"
+ },
+ {
+  "id": "upd-007",
+  "text": "My email address was updated to the new company domain.",
+  "category": "legitimate_update"
+ },
+ {
+  "id": "upd-008",
+  "text": "I stopped using Docker Desktop and moved to Podman.",
+  "category": "legitimate_update"
+ },
+ {
+  "id": "upd-009",
+  "text": "The release schedule was moved up by one week.",
+  "category": "legitimate_update"
+ },
+ {
+  "id": "upd-010",
+  "text": "I am not using Windows anymore, my work laptop runs Linux now.",
+  "category": "legitimate_update"
+ },
+ {
+  "id": "upd-011",
+  "text": "Our retry limit was increased from three to five.",
+  "category": "legitimate_update"
+ },
+ {
+  "id": "upd-012",
+  "text": "I switched my meetings to the afternoon.",
+  "category": "legitimate_update"
+ },
+ {
+  "id": "upd-013",
+  "text": "The staging environment was reset to a clean state yesterday.",
+  "category": "legitimate_update"
+ },
+ {
+  "id": "upd-014",
+  "text": "I no longer work on the billing team, I moved to search.",
+  "category": "legitimate_update"
+ },
+ {
+  "id": "upd-015",
+  "text": "My preferred code formatter changed from Black to Ruff.",
+  "category": "legitimate_update"
+ },
+ {
+  "id": "upd-016",
+  "text": "The code review policy was updated to require two approvals.",
+  "category": "legitimate_update"
+ },
+ {
+  "id": "upd-017",
+  "text": "We discontinued the old reporting dashboard in favor of Grafana.",
+  "category": "legitimate_update"
+ },
+ {
+  "id": "upd-018",
+  "text": "I was switched to the night on-call shift this month.",
+  "category": "legitimate_update"
+ },
+ {
+  "id": "upd-019",
+  "text": "The test timeout was raised to sixty seconds.",
+  "category": "legitimate_update"
+ },
+ {
+  "id": "upd-020",
+  "text": "I decided to skip the weekly newsletter and read the release notes instead.",
+  "category": "legitimate_update"
+ }
+]

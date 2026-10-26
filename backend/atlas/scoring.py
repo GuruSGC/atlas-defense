@@ -22,6 +22,29 @@ class ScoringEngine:
         self.threshold = threshold or settings.ATLAS_TRUST_THRESHOLD
         self.default_weights = settings.SIGNAL_WEIGHTS
 
+    @staticmethod
+    def evaluate_veto(signals: TrustSignalsBreakdown) -> Tuple[float, List[str]]:
+        """
+        Critical-signal veto. Each critical signal below its trigger multiplies the score by
+        max(floor, S / 0.50):
+          historical consistency  trigger 0.40  floor 0.15
+          behavioral consistency  trigger 0.40  floor 0.20
+          embedding anomaly       trigger 0.30  floor 0.40
+        Returns (combined multiplier, descriptions of the violations).
+        """
+        violations: List[str] = []
+        multiplier = 1.0
+        if signals.historical_consistency < 0.40:
+            violations.append(f"Severe factual contradiction with persistent memory (Score: {signals.historical_consistency:.2f})")
+            multiplier *= max(0.15, signals.historical_consistency / 0.50)
+        if signals.behavioral_consistency < 0.40:
+            violations.append(f"Prompt injection / instruction override pattern (Score: {signals.behavioral_consistency:.2f})")
+            multiplier *= max(0.20, signals.behavioral_consistency / 0.50)
+        if signals.embedding_anomaly < 0.30:
+            violations.append(f"Extreme statistical outlier in embedding space (Score: {signals.embedding_anomaly:.2f})")
+            multiplier *= max(0.40, signals.embedding_anomaly / 0.50)
+        return multiplier, violations
+
     def compute_trust_score(
         self,
         signals: TrustSignalsBreakdown,
@@ -49,6 +72,8 @@ class ScoringEngine:
         weighted_sum = 0.0
 
         for key, value in signal_dict.items():
+            if value is None:          # diagnostic fields such as the certified radius carry no weight
+                continue
             w = weights.get(key, 0.0)
             contrib = (w * value) / total_weight
             weighted_contributions[key] = round(contrib, 4)
@@ -62,24 +87,7 @@ class ScoringEngine:
         # severe factual contradiction or prompt injection) cannot be masked
         # by high grammar relevance or high baseline user channel authority.
         # ---------------------------------------------------------------------
-        critical_violations: List[str] = []
-        veto_multiplier = 1.0
-
-        # 1. Historical Contradiction Veto (Direct fact clash)
-        if signals.historical_consistency < 0.40:
-            critical_violations.append(f"Severe factual contradiction with persistent memory (Score: {signals.historical_consistency:.2f})")
-            # Strong multiplicative suppression
-            veto_multiplier *= max(0.15, signals.historical_consistency / 0.50)
-
-        # 2. Behavioral Anomaly / Injection Veto
-        if signals.behavioral_consistency < 0.40:
-            critical_violations.append(f"Prompt injection / instruction override pattern (Score: {signals.behavioral_consistency:.2f})")
-            veto_multiplier *= max(0.20, signals.behavioral_consistency / 0.50)
-
-        # 3. Severe Embedding Latent Outlier
-        if signals.embedding_anomaly < 0.30:
-            critical_violations.append(f"Extreme statistical outlier in embedding space (Score: {signals.embedding_anomaly:.2f})")
-            veto_multiplier *= max(0.40, signals.embedding_anomaly / 0.50)
+        veto_multiplier, critical_violations = self.evaluate_veto(signals)
 
         # Apply veto multiplier to calculate effective trust score
         effective_trust_score = round(float(np.clip(raw_trust_score * veto_multiplier, 0.0, 1.0)), 4)

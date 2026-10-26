@@ -15,7 +15,8 @@ import {
   AtlasConfigResponse,
   AttackScenario,
   AttackSimulationResult,
-  EvaluationSummary
+  EvaluationSummary,
+  EvaluationReport
 } from "./types";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
@@ -129,6 +130,10 @@ class ApiClient {
     return this.request<EvaluationSummary>("/api/evaluation/run", {
       method: "POST",
     });
+  }
+
+  async getEvaluationReport(): Promise<EvaluationReport> {
+    return this.request<EvaluationReport>("/api/evaluation/report");
   }
 }
 

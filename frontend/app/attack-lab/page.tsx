@@ -254,7 +254,9 @@ export default function AttackLabPage() {
                         <div className="text-xs opacity-80 mt-0.5">
                           {simulationResult.defense_successful
                             ? "ATLAS detected anomalous trust parameters and prevented persistent memory poisoning."
-                            : "Vulnerable mode: Malicious payload was persisted and corrupted downstream retrieval."}
+                            : simulationResult.enable_atlas
+                              ? "The payload passed the trust check because each step looks harmless on its own, then persisted and changed the downstream answer."
+                              : "Vulnerable mode: Malicious payload was persisted and corrupted downstream retrieval."}
                         </div>
                       </div>
                     </div>

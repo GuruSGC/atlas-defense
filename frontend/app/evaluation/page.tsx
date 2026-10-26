@@ -20,11 +20,13 @@ import { Button } from "@/components/ui/Button";
 import { StatCard } from "@/components/ui/StatCard";
 import { Badge } from "@/components/ui/Badge";
 import { api } from "@/lib/api";
-import { EvaluationSummary } from "@/lib/types";
+import { EvaluationSummary, EvaluationReport } from "@/lib/types";
+import { ReportSections } from "@/components/evaluation/ReportSections";
 import { formatDate, formatScore } from "@/lib/utils";
 
 export default function EvaluationPage() {
   const [evaluation, setEvaluation] = useState<EvaluationSummary | null>(null);
+  const [report, setReport] = useState<EvaluationReport | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [runningBenchmark, setRunningBenchmark] = useState<boolean>(false);
 
@@ -33,6 +35,7 @@ export default function EvaluationPage() {
     try {
       const data = await api.getEvaluationSummary();
       setEvaluation(data);
+      api.getEvaluationReport().then(setReport).catch(() => setReport(null));
     } catch (err) {
       console.error("Failed to load evaluation metrics:", err);
     } finally {
@@ -139,12 +142,12 @@ export default function EvaluationPage() {
           <StatCard
             title="Recall / TPR"
             value={formatScore(evaluation.recall)}
-            subtitle="Detection Rate"
+            subtitle={evaluation.recall_ci ? `95% CI ${formatScore(evaluation.recall_ci.low)} to ${formatScore(evaluation.recall_ci.high)}` : "Detection Rate"}
           />
           <StatCard
             title="F1-Score"
             value={formatScore(evaluation.f1_score)}
-            subtitle="Harmonic mean"
+            subtitle={evaluation.f1_ci ? `95% CI ${formatScore(evaluation.f1_ci.low)} to ${formatScore(evaluation.f1_ci.high)}` : "Harmonic mean"}
           />
           <StatCard
             title="Retrieval Acc"
@@ -257,7 +260,7 @@ export default function EvaluationPage() {
                   {/* Attack Success Rate Bar Comparison */}
                   <div className="p-4 rounded-lg bg-slate-950 border border-slate-800 space-y-3">
                     <div className="text-xs font-semibold text-slate-300">
-                      Attack Success Rate (ASR) Comparison:
+                      Share of attacks written to memory (persistence only):
                     </div>
 
                     {/* Undefended */}
@@ -361,6 +364,8 @@ export default function EvaluationPage() {
           )}
         </CardContent>
       </Card>
+
+      {report && <ReportSections report={report} />}
     </div>
   );
 }

@@ -49,5 +49,33 @@ Adaptive Trust Management for Long-term Agent Storage: Research Prototype API.
 | `GET` | `/api/attacks/scenarios` | List available poisoning attack scenarios |
 | `POST` | `/api/attacks/run` | Execute attack simulation (ATLAS ON vs OFF) |
 | `POST` | `/api/attacks/reset` | Reset testbed to baseline clean state |
-| `GET` | `/api/evaluation/summary` | Retrieve empirical performance metrics |
-| `POST` | `/api/evaluation/run` | Trigger fresh benchmark evaluation |
+| `GET` | `/api/evaluation/summary` | Retrieve empirical performance metrics (primary protocol, with intervals) |
+| `POST` | `/api/evaluation/run` | Trigger fresh benchmark evaluation (`?live=true` uses the Gemini embedder) |
+| `GET` | `/api/evaluation/report` | Full report: protocols, extra datasets, baselines, seed sweep, Attack Lab |
+| `POST` | `/api/evaluation/report/run` | Regenerate the full report (`?seeds=10&live=false`) |
+
+## Memory stores
+
+Set `VECTOR_STORE_BACKEND` in `.env`:
+
+| Value | Behaviour |
+|---|---|
+| `memory` (default) | In-process, lost on restart |
+| `sqlite` | Persists to `VECTOR_STORE_PATH` (default `data/atlas_memory.db`) |
+| `faiss` | SQLite plus two FAISS inner-product indexes (accepted and other); needs `pip install -r requirements-optional.txt` |
+
+There is no hosted (pgvector or Supabase) store.
+
+## Optional NLI contradiction check
+
+`USE_NLI=true` adds a cross-encoder contradiction probability to the historical
+consistency signal (`NLI_MODEL`, `NLI_GATE`, `NLI_THRESHOLD`). It is off by default
+because on this benchmark it adds no recall; see the root README for the numbers.
+
+## Tests and reports
+
+```bash
+pip install -r requirements-dev.txt
+python -m pytest -q                         # runs offline, no API key needed
+python -m evaluation.run_report --seeds 10  # writes evaluation/results/latest.json
+```

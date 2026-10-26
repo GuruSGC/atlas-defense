@@ -3,21 +3,21 @@ Embedding Anomaly Detector for ATLAS.
 Utilizes scikit-learn's Isolation Forest on latent embedding vectors to detect
 statistical outliers and out-of-distribution adversarial memory injections.
 
-Certified hardening (September 2026): compute_certified_anomaly_score() applies
-randomized smoothing (Cohen, Rosenfeld & Kolter, "Certified Adversarial Robustness
-via Randomized Smoothing," ICML 2019) on top of the base Isolation Forest verdict.
-This is a deliberate, honestly-scoped choice: it is in the same family of idea as
-MemSAD's (Gowda et al., 2026, arXiv:2605.03482) certified detection radius.
-Both produce a provable radius within which a classification cannot flip, but it
-is NOT a reproduction of MemSAD's own gradient-coupling proof, which rests on that
-paper's specific encoder-regularity assumptions and derivation that are not
-reproduced here. Randomized smoothing is a separately well-established, correctly
-implementable technique that gives a real (if narrower) certified guarantee:
-robustness to small L2 perturbations of the embedding vector itself, not to an
-adversary who rewrites the underlying text into an entirely different embedding
-region. That distinction is stated plainly rather than glossed over.
+Certified hardening: certify() applies randomized smoothing (Cohen, Rosenfeld & Kolter,
+"Certified Adversarial Robustness via Randomized Smoothing," ICML 2019) on top of the base
+Isolation Forest verdict, using their two-stage CERTIFY procedure. A first batch of noisy
+samples (n0) selects the smoothed class, and a separate batch (n) estimates how often that
+class wins. Reusing one batch for both steps biases the estimate upward, which is why the
+two batches are kept apart.
+
+It is in the same family of idea as MemSAD's (Gowda et al., 2026, arXiv:2605.03482)
+certified detection radius, since both give a radius inside which a classification cannot
+flip, but it is NOT a reproduction of MemSAD's gradient-coupling proof. The guarantee covers
+small L2 perturbations of the embedding vector itself, not an adversary who rewrites the
+underlying text into an entirely different embedding region.
 """
 
+from dataclasses import dataclass
 from typing import List, Optional, Tuple
 import numpy as np
 from scipy.stats import norm, beta
@@ -37,53 +37,89 @@ def _clopper_pearson_lower(successes: int, trials: int, alpha: float) -> float:
     return float(beta.ppf(alpha, successes, trials - successes + 1))
 
 
+@dataclass
+class Certificate:
+    smoothed_normal: bool      # class chosen from the selection batch
+    votes: int                 # estimation votes for that class
+    n0: int
+    n: int
+    p_lower: float
+    radius: float              # 0.0 when the procedure abstains
+    abstained: bool
+
+
 class AnomalyDetector:
     """
     Isolation Forest anomaly detector for vector memory embeddings.
     """
 
-    def __init__(self, contamination: float = 0.10, dimension: int = 128):
+    BASELINE_SIZE = 50
+    MIN_ACCEPTED_FOR_REFIT = 8
+    REFIT_EVERY = 5
+
+    def __init__(self, contamination: float = 0.10, dimension: int = 128, seed: int = 42):
         self.contamination = contamination
         self.dimension = dimension
+        self.seed = seed
         self.model: Optional[IsolationForest] = None
         self._is_fitted = False
+        self.fit_count = 0
+        self._accepted_at_last_fit = 0
+        self._baseline: Optional[np.ndarray] = None
         self._initialize_baseline_model()
 
     def _initialize_baseline_model(self) -> None:
         """
-        Initializes and fits an initial Isolation Forest on standard baseline embeddings.
+        Fits an initial Isolation Forest on a synthetic baseline of unit-sphere vectors.
         """
-        # Create baseline distribution of benign unit sphere vectors
-        np.random.seed(42)
-        baseline_samples = np.random.normal(loc=0.0, scale=0.3, size=(50, self.dimension))
-        # Normalize to unit sphere
-        norms = np.linalg.norm(baseline_samples, axis=1, keepdims=True)
-        baseline_samples = baseline_samples / np.maximum(norms, 1e-8)
+        rng = np.random.RandomState(self.seed)
+        samples = rng.normal(loc=0.0, scale=0.3, size=(self.BASELINE_SIZE, self.dimension))
+        norms = np.linalg.norm(samples, axis=1, keepdims=True)
+        self._baseline = samples / np.maximum(norms, 1e-8)
+        self._fit_forest(self._baseline)
+        self.fit_count = 0
+        self._accepted_at_last_fit = 0
 
+    def _fit_forest(self, data: np.ndarray) -> None:
         self.model = IsolationForest(
             n_estimators=100,
             contamination=self.contamination,
-            random_state=42
+            random_state=self.seed
         )
-        self.model.fit(baseline_samples)
+        self.model.fit(data)
         self._is_fitted = True
+
+    def reset(self, seed: Optional[int] = None) -> None:
+        """Return to the synthetic baseline, optionally with a different random seed."""
+        if seed is not None:
+            self.seed = seed
+        self._initialize_baseline_model()
 
     def fit(self, embeddings: List[List[float]]) -> None:
         """
-        Fit or re-train Isolation Forest on verified persistent memory embeddings.
+        Refit on verified persistent memory embeddings. The synthetic baseline stays in the
+        training set so that a handful of accepted memories cannot collapse the model onto a
+        tiny region of the space.
         """
         if len(embeddings) < 5:
-            # Not enough samples to reliably fit, keep baseline
             return
+        accepted = np.array(embeddings, dtype=float)
+        self._fit_forest(np.vstack([self._baseline, accepted]))
+        self.fit_count += 1
+        self._accepted_at_last_fit = len(embeddings)
 
-        arr = np.array(embeddings, dtype=float)
-        self.model = IsolationForest(
-            n_estimators=100,
-            contamination=self.contamination,
-            random_state=42
-        )
-        self.model.fit(arr)
-        self._is_fitted = True
+    def maybe_refit(self, accepted_embeddings: List[List[float]]) -> bool:
+        """
+        Called by the memory manager after an accepted insertion. Refits once enough accepted
+        memories exist and then again every few insertions. Returns True if a refit happened.
+        """
+        n = len(accepted_embeddings)
+        if n < self.MIN_ACCEPTED_FOR_REFIT:
+            return False
+        if self.fit_count > 0 and n - self._accepted_at_last_fit < self.REFIT_EVERY:
+            return False
+        self.fit(accepted_embeddings)
+        return True
 
     def compute_anomaly_score(self, embedding: List[float]) -> float:
         """
@@ -94,80 +130,82 @@ class AnomalyDetector:
             return 0.5
 
         arr = np.array(embedding, dtype=float).reshape(1, -1)
-        # raw decision_function: typically in [-0.5, 0.5], positive is inlier, negative is outlier
         raw_score = self.model.decision_function(arr)[0]
-
-        # Sigmoidal mapping to [0.0, 1.0]
-        # Shifted so that 0.0 maps to ~0.5, positive values approach 1.0, negative approach 0.0
         normalized_score = 1.0 / (1.0 + np.exp(-6.0 * raw_score))
         return float(np.clip(normalized_score, 0.0, 1.0))
+
+    def _noisy_votes(self, arr: np.ndarray, count: int, sigma: float, rng: np.random.Generator) -> int:
+        """Number of noisy copies the forest classifies as normal."""
+        noise = rng.normal(loc=0.0, scale=sigma, size=(count, arr.shape[0]))
+        noisy = arr[None, :] + noise
+        norms = np.linalg.norm(noisy, axis=1, keepdims=True)
+        noisy = noisy / np.maximum(norms, 1e-8)
+        return int(np.sum(self.model.decision_function(noisy) > 0))
+
+    def certify(
+        self,
+        embedding: List[float],
+        n0: int = 50,
+        n: int = 100,
+        sigma: float = 0.05,
+        alpha: float = 0.05,
+        seed: Optional[int] = None,
+    ) -> Certificate:
+        """
+        Two-stage randomized-smoothing certification of the normal/anomalous decision.
+
+        1. Draw n0 noisy copies, run the forest, and take the majority as the smoothed class.
+        2. Draw n fresh copies and count how many vote for that class.
+        3. Take a one-sided Clopper-Pearson lower bound p_lower on that class probability.
+        4. If p_lower > 0.5 the radius is sigma * Phi^-1(p_lower); otherwise abstain (radius 0).
+        """
+        arr = np.array(embedding, dtype=float)
+        base = self.seed if seed is None else seed
+        rng_select = np.random.default_rng([base, 0])
+        rng_estimate = np.random.default_rng([base, 1])
+
+        normal_in_select = self._noisy_votes(arr, n0, sigma, rng_select)
+        smoothed_normal = normal_in_select * 2 >= n0
+
+        normal_in_estimate = self._noisy_votes(arr, n, sigma, rng_estimate)
+        votes = normal_in_estimate if smoothed_normal else n - normal_in_estimate
+
+        p_lower = _clopper_pearson_lower(votes, n, alpha)
+        if p_lower > 0.5:
+            return Certificate(smoothed_normal, votes, n0, n, p_lower, sigma * float(norm.ppf(p_lower)), False)
+        return Certificate(smoothed_normal, votes, n0, n, p_lower, 0.0, True)
 
     def compute_certified_anomaly_score(
         self,
         embedding: List[float],
-        n_samples: int = 100,
+        n0: int = 50,
+        n: int = 100,
         sigma: float = 0.05,
         alpha: float = 0.05,
+        seed: Optional[int] = None,
     ) -> Tuple[float, float]:
         """
-        Randomized-smoothing certified hardening of compute_anomaly_score(). See module
-        docstring for exactly what this does and does not guarantee.
-
-        Procedure (Cohen et al., 2019):
-          1. Draw n_samples noisy copies of the embedding, each perturbed by isotropic
-             Gaussian noise of scale sigma, then re-normalized to the unit sphere (the
-             embedding space this system operates in throughout).
-          2. Run the base Isolation Forest's decision_function on all noisy copies and
-             tally how many vote "normal" (positive decision) vs "anomalous".
-          3. Take the majority vote as the smoothed classification, and compute a
-             Clopper-Pearson lower confidence bound (95% by default) on the true
-             probability that vote would recur.
-          4. If that lower bound exceeds 0.5, derive a certified radius R = sigma * Phi^-1(p_lower):
-             the guaranteed minimum L2 distance the embedding would need to move before
-             the smoothed classification could possibly flip, regardless of which specific
-             direction or attack strategy produced that movement.
+        Randomized-smoothing hardening of compute_anomaly_score().
 
         Returns (hardened_score, certified_radius):
-          - hardened_score: the base compute_anomaly_score() value, pulled toward the
-            uncertain midpoint (0.5) in proportion to how small/unreliable the certified
-            radius is. A fragile, barely-a-majority smoothed vote should not be trusted as
-            much as a robust, wide-margin one.
-          - certified_radius: the raw radius in embedding L2-distance units, exposed for
-            transparency (TrustSignalsBreakdown.embedding_anomaly_certified_radius) rather
-            than folded invisibly into a single number.
+          - hardened_score: the base score pulled toward the uncertain midpoint 0.5 in
+            proportion to how small the certified radius is. A decision that barely wins the
+            vote should not be trusted as much as one with a wide margin.
+          - certified_radius: the radius in embedding L2 units, exposed for transparency
+            (TrustSignalsBreakdown.embedding_anomaly_certified_radius).
         """
         raw_score = self.compute_anomaly_score(embedding)
-
         if not self._is_fitted or self.model is None or not embedding:
             return raw_score, 0.0
 
-        arr = np.array(embedding, dtype=float)
-        rng = np.random.RandomState(42)  # deterministic, reproducible per project convention
-        noise = rng.normal(loc=0.0, scale=sigma, size=(n_samples, arr.shape[0]))
-        noisy = arr[None, :] + noise
-        norms = np.linalg.norm(noisy, axis=1, keepdims=True)
-        noisy = noisy / np.maximum(norms, 1e-8)
+        cert = self.certify(embedding, n0=n0, n=n, sigma=sigma, alpha=alpha, seed=seed)
 
-        decisions = self.model.decision_function(noisy)
-        votes_normal = int(np.sum(decisions > 0))
-        majority_is_normal = votes_normal * 2 >= n_samples
-        k = votes_normal if majority_is_normal else (n_samples - votes_normal)
-
-        p_lower = _clopper_pearson_lower(k, n_samples, alpha)
-
-        if p_lower > 0.5:
-            certified_radius = sigma * float(norm.ppf(p_lower))
-        else:
-            certified_radius = 0.0
-
-        # Confidence-based hardening: a certified radius at or beyond 2*sigma is treated as
-        # a fully robust verdict (multiplier 1.0); anything smaller pulls the score toward
-        # the uncertain midpoint proportionally, rather than reporting false confidence.
+        # A radius at or beyond 2*sigma counts as a fully robust verdict (multiplier 1.0).
         reference_radius = 2.0 * sigma
-        confidence_multiplier = float(np.clip(certified_radius / reference_radius, 0.0, 1.0))
+        confidence_multiplier = float(np.clip(cert.radius / reference_radius, 0.0, 1.0))
         hardened_score = 0.5 + (raw_score - 0.5) * confidence_multiplier
 
-        return float(np.clip(hardened_score, 0.0, 1.0)), float(certified_radius)
+        return float(np.clip(hardened_score, 0.0, 1.0)), float(cert.radius)
 
 
 # Global anomaly detector instance

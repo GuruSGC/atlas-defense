@@ -45,3 +45,8 @@ frontend/.env.local
 *.pptx
 *.pdf
 
+
+# Local memory databases
+backend/data/
+*.db
+*.tsbuildinfo

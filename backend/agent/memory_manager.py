@@ -15,6 +15,7 @@ from memory.memory_models import (
 from memory.vector_store import BaseVectorStore, global_vector_store
 from core.embeddings import embedding_service
 from atlas.trust_engine import trust_engine, TrustEngine
+from atlas.anomaly_detector import anomaly_detector
 
 
 class MemoryManager:
@@ -44,7 +45,8 @@ class MemoryManager:
         candidate: CandidateMemory,
         context_text: Optional[str] = None,
         enable_atlas: bool = True,
-        custom_weights: Optional[Dict[str, float]] = None
+        custom_weights: Optional[Dict[str, float]] = None,
+        now: Optional[float] = None
     ) -> Tuple[MemoryItem, float, MemoryStatus, str]:
         """
         Process a candidate memory:
@@ -58,7 +60,9 @@ class MemoryManager:
             trust_score, status, signals, _, reason = self.trust_engine.evaluate_candidate(
                 candidate=candidate,
                 context_text=context_text,
-                custom_weights=custom_weights
+                custom_weights=custom_weights,
+                now=now,
+                record_event=True
             )
             anomaly_score = round(1.0 - signals.embedding_anomaly, 4)
         else:
@@ -92,6 +96,10 @@ class MemoryManager:
 
         # Store in vector store
         self.vector_store.add_memory(memory_item)
+
+        # Keep the anomaly detector's notion of "normal" tied to what this user has accepted
+        if enable_atlas and status == MemoryStatus.ACCEPTED:
+            anomaly_detector.maybe_refit(self.vector_store.get_all_embeddings(MemoryStatus.ACCEPTED))
 
         return memory_item, trust_score, status, reason
 

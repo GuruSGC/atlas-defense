@@ -52,6 +52,16 @@ class Settings(BaseSettings):
     ISOLATION_FOREST_CONTAMINATION: float = 0.10
     EMBEDDING_DIMENSION: int = 128
     MOCK_MODE_FORCED: bool = False
+
+    # Vector storage: memory (default), sqlite, or faiss (needs faiss-cpu)
+    VECTOR_STORE_BACKEND: str = Field(default="memory", env="VECTOR_STORE_BACKEND")
+    VECTOR_STORE_PATH: str = Field(default="data/atlas_memory.db", env="VECTOR_STORE_PATH")
+
+    # Optional NLI cross-encoder for contradiction checks (needs sentence-transformers)
+    USE_NLI: bool = Field(default=False, env="USE_NLI")
+    NLI_MODEL: str = Field(default="cross-encoder/nli-deberta-v3-xsmall", env="NLI_MODEL")
+    NLI_GATE: str = Field(default="slot", env="NLI_GATE")            # slot, related, or none
+    NLI_THRESHOLD: float = Field(default=0.90, env="NLI_THRESHOLD")
     
     class Config:
         env_file = str(BASE_DIR / ".env")
